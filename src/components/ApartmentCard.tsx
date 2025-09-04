@@ -35,10 +35,14 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
         >
           <div className="relative h-48">
             <img
-              src={apartment.images[0].url}
+              src={apartment.images[0].url.replace(
+                "/upload/",
+                "/upload/q_5,f_auto/"
+              )}
               alt={apartment.title}
               className="w-full h-full object-cover"
             />
+
             {apartments?.some((apt) => apt.apartment_id == apartment._id) &&
               is_auth && (
                 <button

@@ -54,11 +54,21 @@ const ApartmentDetailPage: React.FC = () => {
         {/* Image Gallery */}
         <div className="relative">
           <div className="h-96">
+            {/* ========== HERE WE CAN ADD ABILITY TO WATCH CLEAR IMAGE ========== */}
+            {/*<a
+              href={apartment.images[activeImage].url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >*/}
             <img
-              src={apartment.images[activeImage].url}
+              src={apartment.images[activeImage].url.replace(
+                "/upload/",
+                "/upload/q_20,f_auto/"
+              )}
               alt={apartment.title}
               className="w-full h-full object-cover"
             />
+            {/*</a>*/}
           </div>
           {apartment.images.length > 1 && (
             <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 rtl:space-x-reverse">
@@ -86,7 +96,7 @@ const ApartmentDetailPage: React.FC = () => {
                 }`}
               >
                 <img
-                  src={image.url}
+                  src={image.url.replace("/upload/", "/upload/q_20,f_auto/")}
                   alt={`صورة ${index + 1}`}
                   className="w-full h-full object-cover"
                 />
@@ -107,10 +117,10 @@ const ApartmentDetailPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl flex font-bold text-yellow-600 text-left sm:text-right">
+            <div className="text-lg flex font-bold text-yellow-600 text-left sm:text-right">
               {Number(apartment.rent).toLocaleString("en")} ليرة
               <span className="text-lg font-normal text-gray-600 mr-4">
-                {apartment.payment_method === "شهري" ? "شهرياً" : "سنوياً"}
+                {"شهرياً"}
               </span>
             </div>
           </div>
