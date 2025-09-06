@@ -51,25 +51,31 @@ const ApartmentDetailPage: React.FC = () => {
         </Link>
       </div>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        {/* Image Gallery */}
+        {/* Image / Video Gallery */}
         <div className="relative">
           <div className="h-96">
-            {/* ========== HERE WE CAN ADD ABILITY TO WATCH CLEAR IMAGE ========== */}
-            {/*<a
-              href={apartment.images[activeImage].url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >*/}
-            <img
-              src={apartment.images[activeImage].url.replace(
-                "/upload/",
-                "/upload/q_20,f_auto/"
-              )}
-              alt={apartment.title}
-              className="w-full h-full object-cover"
-            />
-            {/*</a>*/}
+            {apartment.images[activeImage].type === "video" ? (
+              <video
+                src={apartment.images[activeImage].url.replace(
+                  "/upload/",
+                  "/upload/f_mp4,w_320,vc_h264,br_300k/"
+                )}
+                className="w-full h-full object-cover"
+                controls
+                crossOrigin="anonymous"
+              />
+            ) : (
+              <img
+                src={apartment.images[activeImage].url.replace(
+                  "/upload/",
+                  "/upload/q_20,f_auto/"
+                )}
+                alt={apartment.title}
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
+
           {apartment.images.length > 1 && (
             <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 rtl:space-x-reverse">
               {apartment.images.map((_, index) => (
@@ -84,10 +90,11 @@ const ApartmentDetailPage: React.FC = () => {
             </div>
           )}
         </div>
+
         {/* Thumbnail Gallery */}
         {apartment.images.length > 1 && (
           <div className="flex overflow-x-auto p-4 space-x-2 rtl:space-x-reverse">
-            {apartment.images.map((image, index) => (
+            {apartment.images.map((media, index) => (
               <button
                 key={index}
                 onClick={() => setActiveImage(index)}
@@ -95,15 +102,20 @@ const ApartmentDetailPage: React.FC = () => {
                   activeImage === index ? "ring-2 ring-yellow-600" : ""
                 }`}
               >
-                <img
-                  src={image.url.replace("/upload/", "/upload/q_20,f_auto/")}
-                  alt={`صورة ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
+                {media.type === "video" ? (
+                  ""
+                ) : (
+                  <img
+                    src={media.url.replace("/upload/", "/upload/q_20,f_auto/")}
+                    alt={`صورة ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </button>
             ))}
           </div>
         )}
+
         {/* Apartment Details */}
         <div className="p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

@@ -12,10 +12,27 @@ const AddApartmentPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    location: string;
+    images: File[];
+    rooms: number;
+    gender: string;
+    rent: number;
+    payment_method: string;
+    services: {
+      solar_power: boolean;
+      internet: boolean;
+      main_water: boolean;
+      office: boolean;
+      secure_month: boolean;
+    };
+    description: string;
+    owner_phone: string;
+  }>({
     title: "",
     location: "",
-    images: [],
+    images: [], // ✅ TS بيعرفها File[]
     rooms: 1,
     gender: "ذكور أو إناث",
     rent: Number(""),
@@ -30,12 +47,14 @@ const AddApartmentPage: React.FC = () => {
     description: "",
     owner_phone: "",
   });
+
   const { error, loading } = useSelector(
     (state: RootState) => state.apartments
   );
   const { limit, email } = useSelector((state: RootState) => state.user);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -95,11 +114,17 @@ const AddApartmentPage: React.FC = () => {
     e.preventDefault();
     if (!validateForm()) return;
     dispatch(loading_fun());
-    try {
-      const uploadedImages: { url: string; public_id: string }[] = [];
 
-      async function compressToTarget(file: File, maxSizeKB = 500) {
-        let quality = 0.8; // بداية الجودة
+    try {
+      const uploadedFiles: {
+        url: string;
+        public_id: string;
+        type: "image" | "video";
+      }[] = [];
+
+      // ✅ دالة ضغط الصور
+      async function compressToTarget(file: File, maxSizeKB = 200) {
+        let quality = 0.8;
         let compressed = file;
 
         while (true) {
@@ -113,35 +138,60 @@ const AddApartmentPage: React.FC = () => {
           compressed = await imageCompression(file, options);
 
           if (compressed.size / 1024 <= maxSizeKB || quality <= 0.3) {
-            // الحجم وصل للهدف أو الجودة منخفضة جدًا
             break;
           }
 
-          quality -= 0.1; // خفّض الجودة تدريجيًا
+          quality -= 0.1;
         }
 
         return compressed;
       }
 
       for (const file of formData.images) {
-        const compressed = await compressToTarget(file, 500); // الهدف: 500 KB
+        if (file.type.startsWith("image/")) {
+          // ✅ صور
+          const compressed = await compressToTarget(file, 300);
+          const formDataCloud = new FormData();
+          formDataCloud.append("file", compressed);
+          formDataCloud.append("upload_preset", "my_unsigned_preset");
 
-        const formDataCloud = new FormData();
-        formDataCloud.append("file", compressed);
-        formDataCloud.append("upload_preset", "my_unsigned_preset");
+          const res = await fetch(
+            "https://api.cloudinary.com/v1_1/dcvmfnhhk/image/upload",
+            { method: "POST", body: formDataCloud }
+          );
 
-        const res = await fetch(
-          "https://api.cloudinary.com/v1_1/dcvmfnhhk/image/upload",
-          { method: "POST", body: formDataCloud }
-        );
+          if (!res.ok) throw new Error("فشل رفع الصورة إلى Cloudinary");
 
-        if (!res.ok) throw new Error("فشل رفع الصورة إلى Cloudinary");
+          const data = await res.json();
+          uploadedFiles.push({
+            url: data.secure_url, // الصورة الأصلية (مضغوطة مسبقاً)
+            public_id: data.public_id,
+            type: "image",
+          });
+        } else if (file.type.startsWith("video/")) {
+          // ✅ فيديو
+          const formDataCloud = new FormData();
+          formDataCloud.append("file", file); // الملف الأصلي
+          formDataCloud.append("upload_preset", "my_unsigned_preset");
 
-        const data = await res.json();
-        uploadedImages.push({
-          url: data.secure_url,
-          public_id: data.public_id,
-        });
+          const res = await fetch(
+            "https://api.cloudinary.com/v1_1/dcvmfnhhk/video/upload",
+            { method: "POST", body: formDataCloud }
+          );
+
+          if (!res.ok) throw new Error("فشل رفع الفيديو إلى Cloudinary");
+
+          const data = await res.json();
+
+          // نسخة مضغوطة جاهزة للعرض (تحويل Cloudinary)
+          const compressedUrl = `https://res.cloudinary.com/dcvmfnhhk/video/upload/w_640,q_auto,f_mp4/${data.public_id}.mp4`;
+
+          uploadedFiles.push({
+            url: compressedUrl, // نستخدم الرابط المضغوط بدل الأصل
+            public_id: data.public_id,
+            type: "video",
+          });
+        }
       }
 
       // إرسال البيانات مع الروابط للسيرفر
@@ -149,7 +199,7 @@ const AddApartmentPage: React.FC = () => {
         add_apartment({
           title: formData.title,
           location: formData.location,
-          images: uploadedImages,
+          images: uploadedFiles,
           rooms: formData.rooms,
           gender: formData.gender,
           rent: Number(String(formData.rent).replace(/,/g, "")),
@@ -163,7 +213,7 @@ const AddApartmentPage: React.FC = () => {
 
       navigate("/");
     } catch (error) {
-      console.error("فشل رفع الصور:", error);
+      console.error("فشل رفع الصور/الفيديو:", error);
     }
   };
 
@@ -238,16 +288,24 @@ const AddApartmentPage: React.FC = () => {
                 صور الشقة
               </h3>
 
-              {/* معاينة الصور */}
+              {/* معاينة الصور والفيديوهات */}
               {formData.images.length > 0 && (
                 <div className="flex flex-wrap gap-3 mb-4">
                   {formData.images.map((file: File, index: number) => (
                     <div key={index} className="relative">
-                      <img
-                        src={URL.createObjectURL(file)} // 🔑 للمعاينة فقط
-                        alt={`صورة ${index + 1}`}
-                        className="w-24 h-24 object-cover rounded-lg border"
-                      />
+                      {file.type.startsWith("image/") ? (
+                        <img
+                          src={URL.createObjectURL(file)} // 🔑 للمعاينة فقط
+                          alt={`صورة ${index + 1}`}
+                          className="w-24 h-24 object-cover rounded-lg border"
+                        />
+                      ) : (
+                        <video
+                          src={URL.createObjectURL(file)} // 🔑 للمعاينة فقط
+                          className="w-24 h-24 object-cover rounded-lg border"
+                          controls
+                        />
+                      )}
                       <button
                         type="button"
                         onClick={() => removeImageField(index)}
@@ -263,32 +321,35 @@ const AddApartmentPage: React.FC = () => {
               {/* مدخل رفع الصور */}
               <label
                 className={`w-full cursor-pointer p-3 flex items-center justify-center border rounded-lg focus-within:ring-2 focus-within:ring-yellow-500 
-    ${errors.images ? "border-red-500" : "border-gray-300"} hover:bg-yellow-50`}
+  ${errors.images ? "border-red-500" : "border-gray-300"} hover:bg-yellow-50`}
               >
                 <input
                   disabled={formData.images.length >= 8}
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/*"
                   multiple
                   onChange={(e) => {
                     if (!e.target.files) return;
                     const files = Array.from(e.target.files);
 
                     files.forEach((file) => {
-                      if (!file.type.startsWith("image/")) {
+                      if (
+                        !file.type.startsWith("image/") &&
+                        !file.type.startsWith("video/")
+                      ) {
                         alert(
-                          `الملف "${file.name}" غير مدعوم. يرجى رفع صورة فقط.`
+                          `الملف "${file.name}" غير مدعوم. يرجى رفع صورة أو فيديو فقط.`
                         );
                         return;
                       }
 
                       setFormData((prev: any) => ({
                         ...prev,
-                        images: [...prev.images, file], // 🔑 نخزن الملف نفسه
+                        images: [...prev.images, file], // 🔑 نخزن الملف نفسه (صورة أو فيديو)
                       }));
                     });
 
-                    e.target.value = ""; // إعادة التعيين
+                    e.target.value = ""; // إعادة التعيين بعد كل رفع
                   }}
                   className="hidden"
                 />
@@ -302,9 +363,9 @@ const AddApartmentPage: React.FC = () => {
                     <path d="M5 20h14a1 1 0 001-1v-9h-2v8H6v-8H4v9a1 1 0 001 1zm7-16a1 1 0 011 1v9h2v-9a3 3 0 00-6 0v9h2V5z" />
                   </svg>
                   {formData.images.length < 8 ? (
-                    <span>رفع صور الشقة</span>
+                    <span>رفع صور أو فيديو</span>
                   ) : (
-                    <span>الحد الأقصى هو {formData.images.length} صور</span>
+                    <span>الحد الأقصى هو {formData.images.length} ملفات</span>
                   )}
                 </span>
               </label>

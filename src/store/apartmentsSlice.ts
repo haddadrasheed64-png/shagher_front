@@ -12,7 +12,7 @@ export interface Apartment {
   _id?: any;
   title: string;
   location: string;
-  images: { url: string; public_id: string }[];
+  images: { url: string; public_id: string; type: "image" | "video" }[];
   rooms: number;
   gender: "ذكور" | "إناث" | "ذكور أو إناث" | string;
   rent: number;

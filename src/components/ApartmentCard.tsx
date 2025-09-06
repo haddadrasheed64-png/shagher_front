@@ -33,15 +33,27 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
           to={`/apartment/${apartment._id}`}
           className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
         >
-          <div className="relative h-48">
-            <img
-              src={apartment.images[0].url.replace(
-                "/upload/",
-                "/upload/q_5,f_auto/"
-              )}
-              alt={apartment.title}
-              className="w-full h-full object-cover"
-            />
+          <div
+            className={`relative h-48 ${
+              apartment.images[0].type == "video"
+                ? "bg-yellow-600 flex items-center justify-center"
+                : ""
+            }`}
+          >
+            {apartment.images[0].type === "video" ? (
+              <div className="flex items-center justify-center">
+                <span className="text-white font-bold text-3xl">فيديو</span>
+              </div>
+            ) : (
+              <img
+                src={apartment.images[0].url.replace(
+                  "/upload/",
+                  "/upload/q_30,f_auto/"
+                )}
+                alt={apartment.title}
+                className="w-full h-full object-cover"
+              />
+            )}
 
             {apartments?.some((apt) => apt.apartment_id == apartment._id) &&
               is_auth && (
