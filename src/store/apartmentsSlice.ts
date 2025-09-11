@@ -14,15 +14,23 @@ export interface Apartment {
   location: string;
   images: { url: string; public_id: string; type: "image" | "video" }[];
   rooms: number;
-  gender: "ذكور" | "إناث" | "ذكور أو إناث" | string;
-  rent: number;
-  payment_method:
-    | "سلف"
-    | "شهري"
-    | "سلف 3 أشهر"
-    | "سلف 6 أشهر"
-    | "سلف سنة"
-    | any;
+  gender: "ذكور" | "إناث" | "ذكور أو إناث" | "عائلات" | string;
+  // نوع الإدراج
+  listing_type: "sell" | "rent";
+  // للإيجار
+  rent?: number;
+  payment_method?:
+  | "سلف"
+  | "شهري"
+  | "يومي"
+  | "سلف 3 أشهر"
+  | "سلف 6 أشهر"
+  | "سلف سنة"
+  | any;
+  // للبيع
+  sale_price?: number;
+  // العملة
+  currency: "USD" | "SYP";
   services: services;
   description: string;
   owner_phone: any;
@@ -69,8 +77,11 @@ export const add_apartment = createAsyncThunk(
     images,
     rooms,
     gender,
+    listing_type,
     rent,
     payment_method,
+    sale_price,
+    currency,
     services,
     description,
     owner_phone,
@@ -85,8 +96,11 @@ export const add_apartment = createAsyncThunk(
           images: images,
           rooms: rooms,
           gender: gender,
+          listing_type: listing_type,
           rent: rent,
           payment_method: payment_method,
+          sale_price: sale_price,
+          currency: currency,
           services: services,
           description: description,
           owner_phone: owner_phone,

@@ -39,6 +39,8 @@ const ApartmentDetailPage: React.FC = () => {
     window.scrollTo(0, 0);
   });
 
+  const currencyLabel = apartment.currency === "USD" ? "دولار" : "ليرة";
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
@@ -82,9 +84,8 @@ const ApartmentDetailPage: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => setActiveImage(index)}
-                  className={`w-3 h-3 rounded-full ${
-                    activeImage === index ? "bg-yellow-600" : "bg-white"
-                  }`}
+                  className={`w-3 h-3 rounded-full ${activeImage === index ? "bg-yellow-600" : "bg-white"
+                    }`}
                 />
               ))}
             </div>
@@ -98,9 +99,8 @@ const ApartmentDetailPage: React.FC = () => {
               <button
                 key={index}
                 onClick={() => setActiveImage(index)}
-                className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden ${
-                  activeImage === index ? "ring-2 ring-yellow-600" : ""
-                }`}
+                className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden ${activeImage === index ? "ring-2 ring-yellow-600" : ""
+                  }`}
               >
                 {media.type === "video" ? (
                   ""
@@ -124,16 +124,24 @@ const ApartmentDetailPage: React.FC = () => {
                 {apartment.title}
               </h1>
               <div className="flex items-center text-gray-600 mb-4">
-                <MapPinIcon className="w-5 h-5 ml-1 shrink-0" />
+                <MapPinIcon className="w-5 ه-5 ml-1 shrink-0" />
                 <span className="truncate">{apartment.location}</span>
               </div>
             </div>
 
             <div className="text-lg flex font-bold text-yellow-600 text-left sm:text-right">
-              {Number(apartment.rent).toLocaleString("en")} ليرة
-              <span className="text-lg font-normal text-gray-600 mr-4">
-                {"شهرياً"}
-              </span>
+              {apartment.listing_type === "sell" ? (
+                <>
+                  {Number(apartment.sale_price).toLocaleString("en")} {currencyLabel}
+                </>
+              ) : (
+                <>
+                  {Number(apartment.rent).toLocaleString("en")} {currencyLabel}
+                  <span className="text-lg font-normal text-gray-600 mr-4">
+                    {apartment.payment_method === "شهري" ? "شهرياً" : apartment.payment_method}
+                  </span>
+                </>
+              )}
             </div>
           </div>
 
@@ -153,13 +161,15 @@ const ApartmentDetailPage: React.FC = () => {
                 <p className="font-semibold">{apartment.gender}</p>
               </div>
             </div>
-            <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
-              <BanknoteIcon className="w-6 h-6 text-yellow-600 ml-2" />
-              <div>
-                <p className="text-sm text-gray-500">طريقة الدفع</p>
-                <p className="font-semibold">{apartment.payment_method}</p>
+            {apartment.listing_type === "rent" && (
+              <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
+                <BanknoteIcon className="w-6 h-6 text-yellow-600 ml-2" />
+                <div>
+                  <p className="text-sm text-gray-500">طريقة الدفع</p>
+                  <p className="font-semibold">{apartment.payment_method}</p>
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
               <ShieldIcon className="w-6 h-6 text-yellow-600 ml-2" />
               <div>
@@ -178,18 +188,16 @@ const ApartmentDetailPage: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {apartment.services.solar_power ? (
                 <div
-                  className={`flex items-center p-3 rounded-lg ${
-                    apartment.services.solar_power
+                  className={`flex items-center p-3 rounded-lg ${apartment.services.solar_power
                       ? "bg-green-50"
                       : "bg-gray-50"
-                  }`}
+                    }`}
                 >
                   <SunIcon
-                    className={`w-5 h-5 ml-2 ${
-                      apartment.services.solar_power
+                    className={`w-5 h-5 ml-2 ${apartment.services.solar_power
                         ? "text-green-600"
                         : "text-gray-400"
-                    }`}
+                      }`}
                   />
                   <span
                     className={
@@ -208,16 +216,14 @@ const ApartmentDetailPage: React.FC = () => {
               )}
               {apartment.services.internet ? (
                 <div
-                  className={`flex items-center p-3 rounded-lg ${
-                    apartment.services.internet ? "bg-green-50" : "bg-gray-50"
-                  }`}
+                  className={`flex items-center p-3 rounded-lg ${apartment.services.internet ? "bg-green-50" : "bg-gray-50"
+                    }`}
                 >
                   <WifiIcon
-                    className={`w-5 h-5 ml-2 ${
-                      apartment.services.internet
+                    className={`w-5 h-5 ml-2 ${apartment.services.internet
                         ? "text-green-600"
                         : "text-gray-400"
-                    }`}
+                      }`}
                   />
                   <span
                     className={
@@ -233,16 +239,14 @@ const ApartmentDetailPage: React.FC = () => {
                 ""
               )}
               <div
-                className={`flex items-center p-3 rounded-lg ${
-                  apartment.services.main_water ? "bg-green-50" : "bg-gray-50"
-                }`}
+                className={`flex items-center p-3 rounded-lg ${apartment.services.main_water ? "bg-green-50" : "bg-gray-50"
+                  }`}
               >
                 <DropletIcon
-                  className={`w-5 h-5 ml-2 ${
-                    apartment.services.main_water
+                  className={`w-5 h-5 ml-2 ${apartment.services.main_water
                       ? "text-green-600"
                       : "text-gray-400"
-                  }`}
+                    }`}
                 />
                 <span
                   className={
@@ -257,16 +261,14 @@ const ApartmentDetailPage: React.FC = () => {
                 </span>
               </div>
               <div
-                className={`flex items-center p-3 rounded-lg ${
-                  apartment.services.office ? "bg-green-50" : "bg-gray-50"
-                }`}
+                className={`flex items-center p-3 rounded-lg ${apartment.services.office ? "bg-green-50" : "bg-gray-50"
+                  }`}
               >
                 <BuildingIcon
-                  className={`w-5 h-5 ml-2 ${
-                    apartment.services.office
+                  className={`w-5 h-5 ml-2 ${apartment.services.office
                       ? "text-green-600"
                       : "text-gray-400"
-                  }`}
+                    }`}
                 />
                 <span
                   className={

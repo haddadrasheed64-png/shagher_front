@@ -18,8 +18,15 @@ const AddApartmentPage: React.FC = () => {
     images: File[];
     rooms: number;
     gender: string;
-    rent: number;
-    payment_method: string;
+    // نوع الإدراج
+    listing_type: "sell" | "rent";
+    // للإيجار
+    rent?: number;
+    payment_method?: string;
+    // للبيع
+    sale_price?: number;
+    // العملة
+    currency: "USD" | "SYP";
     services: {
       solar_power: boolean;
       internet: boolean;
@@ -35,8 +42,11 @@ const AddApartmentPage: React.FC = () => {
     images: [], // ✅ TS بيعرفها File[]
     rooms: 1,
     gender: "ذكور أو إناث",
+    listing_type: "rent",
     rent: Number(""),
     payment_method: "شهري",
+    sale_price: Number(""),
+    currency: "SYP",
     services: {
       solar_power: false,
       internet: false,
@@ -63,7 +73,7 @@ const AddApartmentPage: React.FC = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value as any,
     });
   };
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +90,7 @@ const AddApartmentPage: React.FC = () => {
     } else {
       setFormData({
         ...formData,
-        [name]: checked,
+        [name]: checked as any,
       });
     }
   };
@@ -101,8 +111,17 @@ const AddApartmentPage: React.FC = () => {
     if (!formData.location.trim()) {
       newErrors.location = "يرجى إدخال موقع الشقة";
     }
-    if (Number(formData.rent) <= 0) {
-      newErrors.rent = "يرجى إدخال قيمة إيجار صحيحة";
+    if (formData.listing_type === "rent") {
+      if (!formData.rent || Number(formData.rent) <= 0) {
+        newErrors.rent = "يرجى إدخال قيمة إيجار صحيحة";
+      }
+      if (!formData.payment_method) {
+        newErrors.payment_method = "يرجى تحديد طريقة الدفع";
+      }
+    } else if (formData.listing_type === "sell") {
+      if (!formData.sale_price || Number(formData.sale_price) <= 0) {
+        newErrors.sale_price = "يرجى إدخال سعر بيع صحيح";
+      }
     }
     if (!formData.description.trim()) {
       newErrors.description = "يرجى إدخال وصف للشقة";
@@ -202,13 +221,16 @@ const AddApartmentPage: React.FC = () => {
           images: uploadedFiles,
           rooms: formData.rooms,
           gender: formData.gender,
-          rent: Number(String(formData.rent).replace(/,/g, "")),
-          payment_method: formData.payment_method,
+          listing_type: formData.listing_type,
+          rent: formData.listing_type === "rent" ? Number(String(formData.rent).replace(/,/g, "")) : undefined,
+          payment_method: formData.listing_type === "rent" ? formData.payment_method : undefined,
+          sale_price: formData.listing_type === "sell" ? Number(String(formData.sale_price).replace(/,/g, "")) : undefined,
+          currency: formData.currency,
           services: formData.services,
           description: formData.description,
           owner_phone: formData.owner_phone,
           email: email,
-        })
+        } as any)
       );
 
       navigate("/");
@@ -248,9 +270,8 @@ const AddApartmentPage: React.FC = () => {
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
-                      errors.title ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${errors.title ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.title && (
                     <p className="text-red-500 text-sm mt-1">{errors.title}</p>
@@ -270,9 +291,8 @@ const AddApartmentPage: React.FC = () => {
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
-                      errors.location ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${errors.location ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.location && (
                     <p className="text-red-500 text-sm mt-1">
@@ -413,58 +433,128 @@ const AddApartmentPage: React.FC = () => {
                     <option value="ذكور">ذكور</option>
                     <option value="إناث">إناث</option>
                     <option value="ذكور أو إناث">ذكور أو إناث</option>
+                    <option value="عائلات">عائلات</option>
                   </select>
                 </div>
-                <div>
-                  <label htmlFor="rent" className="block text-gray-700 mb-1">
-                    قيمة الإيجار بالليرة السورية
-                  </label>
-                  <input
-                    type="text"
-                    id="rent"
-                    name="rent"
-                    inputMode="numeric"
-                    value={
-                      formData.rent
-                        ? Number(formData.rent).toLocaleString("en")
-                        : ""
-                    }
-                    onChange={(e) => {
-                      // السماح فقط بالأرقام
-                      const onlyNums = e.target.value.replace(/[^0-9]/g, "");
-                      handleInputChange({
-                        target: { name: "rent", value: onlyNums },
-                      } as React.ChangeEvent<HTMLInputElement>);
-                    }}
-                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
-                      errors.rent ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.rent && (
-                    <p className="text-red-500 text-sm mt-1">{errors.rent}</p>
-                  )}
-                </div>
 
+                {/* نوع الإدراج */}
                 <div>
-                  <label
-                    htmlFor="payment_method"
-                    className="block text-gray-700 mb-1"
-                  >
-                    طريقة الدفع
+                  <label htmlFor="listing_type" className="block text-gray-700 mb-1">
+                    نوع الإعلان
                   </label>
                   <select
-                    id="payment_method"
-                    name="payment_method"
-                    value={formData.payment_method}
+                    id="listing_type"
+                    name="listing_type"
+                    value={formData.listing_type}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   >
-                    <option value="شهري">شهري</option>
-                    <option value="سلف 3 أشهر">سلف 3 أشهر</option>
-                    <option value="سلف 6 أشهر">سلف 6 أشهر</option>
-                    <option value="سلف سنة">سلف سنة</option>
+                    <option value="rent">للإيجار</option>
+                    <option value="sell">للبيع</option>
                   </select>
                 </div>
+                {/* العملة */}
+                <div>
+                  <label htmlFor="currency" className="block text-gray-700 mb-1">
+                    العملة
+                  </label>
+                  <select
+                    id="currency"
+                    name="currency"
+                    value={formData.currency}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  >
+                    <option value="SYP">ليرة سورية</option>
+                    <option value="USD">دولار</option>
+                  </select>
+                </div>
+
+                {/* حقول الإيجار */}
+                {formData.listing_type === "rent" && (
+                  <>
+                    <div>
+                      <label htmlFor="rent" className="block text-gray-700 mb-1">
+                        قيمة الإيجار
+                      </label>
+                      <input
+                        type="text"
+                        id="rent"
+                        name="rent"
+                        inputMode="numeric"
+                        value={
+                          formData.rent
+                            ? Number(formData.rent).toLocaleString("en")
+                            : ""
+                        }
+                        onChange={(e) => {
+                          // السماح فقط بالأرقام
+                          const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+                          handleInputChange({
+                            target: { name: "rent", value: onlyNums },
+                          } as React.ChangeEvent<HTMLInputElement>);
+                        }}
+                        className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${errors.rent ? "border-red-500" : "border-gray-300"
+                          }`}
+                      />
+                      {errors.rent && (
+                        <p className="text-red-500 text-sm mt-1">{errors.rent}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="payment_method"
+                        className="block text-gray-700 mb-1"
+                      >
+                        طريقة الدفع
+                      </label>
+                      <select
+                        id="payment_method"
+                        name="payment_method"
+                        value={formData.payment_method}
+                        onChange={handleInputChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      >
+                        <option value="شهري">شهري</option>
+                        <option value="سلف 3 أشهر">سلف 3 أشهر</option>
+                        <option value="سلف 6 أشهر">سلف 6 أشهر</option>
+                        <option value="سلف سنة">سلف سنة</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* حقول البيع */}
+                {formData.listing_type === "sell" && (
+                  <div>
+                    <label htmlFor="sale_price" className="block text-gray-700 mb-1">
+                      سعر البيع
+                    </label>
+                    <input
+                      type="text"
+                      id="sale_price"
+                      name="sale_price"
+                      inputMode="numeric"
+                      value={
+                        formData.sale_price
+                          ? Number(formData.sale_price).toLocaleString("en")
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+                        handleInputChange({
+                          target: { name: "sale_price", value: onlyNums },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                      }}
+                      className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${errors.sale_price ? "border-red-500" : "border-gray-300"
+                        }`}
+                    />
+                    {errors.sale_price && (
+                      <p className="text-red-500 text-sm mt-1">{errors.sale_price}</p>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2">خدمات إضافية</label>
@@ -550,11 +640,10 @@ const AddApartmentPage: React.FC = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
-                className={`w-full text-sm p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
-                  errors.description ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full text-sm p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${errors.description ? "border-red-500" : "border-gray-300"
+                  }`}
                 maxLength={100}
-                placeholder="مثلا يفضل أن يكون المستأجر من منطقة معينة, شيء عاطل, شيء مفقود, تغيير مع الزمن..."
+                placeholder="ميزة معينة, شي رح يتغير أو رح يتجدد, شي عاطل, ملاحظات خاصة"
               />
               {errors.description && (
                 <p className="text-red-500 text-sm mt-1">
@@ -580,9 +669,8 @@ const AddApartmentPage: React.FC = () => {
                     target: { name: "owner_phone", value: onlyNums },
                   } as React.ChangeEvent<HTMLInputElement>);
                 }}
-                className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
-                  errors.owner_phone ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${errors.owner_phone ? "border-red-500" : "border-gray-300"
+                  }`}
               />
               {errors.owner_phone && (
                 <p className="text-red-500 text-sm mt-1">
@@ -603,11 +691,10 @@ const AddApartmentPage: React.FC = () => {
                   disabled={Number(limit) === 0}
                   type="submit"
                   className={`px-6 py-2 rounded-lg items-center justify-center 
-    ${
-      Number(limit) === 0
-        ? "bg-gray-300 cursor-not-allowed"
-        : "bg-yellow-600 hover:bg-yellow-700 text-white"
-    }`}
+    ${Number(limit) === 0
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-yellow-600 hover:bg-yellow-700 text-white"
+                    }`}
                 >
                   إضافة الشقة
                 </button>

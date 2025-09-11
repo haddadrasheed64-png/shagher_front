@@ -133,6 +133,7 @@ const Edit_Apartment_Page: React.FC = () => {
                     <option value="ذكور">ذكور</option>
                     <option value="إناث">إناث</option>
                     <option value="ذكور أو إناث">ذكور أو إناث</option>
+                    <option value="عائلات">عائلات</option>
                   </select>
                 </div>
                 <div>
@@ -179,6 +180,8 @@ const Edit_Apartment_Page: React.FC = () => {
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   >
+                    {" "}
+                    <option value="يومي">يومي</option>
                     <option value="شهري">شهري</option>
                     <option value="سلف 3 أشهر">سلف 3 أشهر</option>
                     <option value="سلف 6 أشهر">سلف 6 أشهر</option>
