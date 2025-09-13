@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from "../store/store";
 
 // استيراد Radix Dialog
 import * as Dialog from "@radix-ui/react-dialog";
+import axios from "axios";
 
 interface ApartmentCardProps {
   apartment: Apartment;
@@ -34,19 +35,15 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
 
   return (
     apartment && (
-      <>
+      <div
+        onClick={() => {
+          axios.post("https://shagher.onrender.com/website", {
+            method: "click_on_apartment",
+            content: apartment._id,
+          });
+        }}
+      >
         <Link
-          onClick={() => {
-            const payload = JSON.stringify({
-              method: "click_on_apartment",
-              content: apartment._id,
-            });
-
-            navigator.sendBeacon(
-              "https://shagher.onrender.com/website",
-              new Blob([payload], { type: "application/json" })
-            );
-          }}
           to={`/apartment/${apartment._id}`}
           className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
         >
@@ -191,7 +188,7 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
             </Dialog.Content>
           </Dialog.Portal>
         </Dialog.Root>
-      </>
+      </div>
     )
   );
 };
