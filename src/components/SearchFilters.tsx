@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { filterApartments, fetch_apartments } from "../store/apartmentsSlice";
-import { SearchIcon, SlidersIcon, ArrowDown, ArrowUp } from "lucide-react";
+import {
+  SearchIcon,
+  SlidersIcon,
+  ArrowDown,
+  ArrowUp,
+  RefreshCwIcon,
+} from "lucide-react";
 import { AppDispatch, RootState } from "../store/store";
 import { filter_my_apartments } from "../store/apartmentsSlice";
 
@@ -15,6 +21,7 @@ const SearchFilters: React.FC = () => {
     rooms: "",
     gender: "",
     payment_method: "",
+    listing_type: "",
     services: {
       solar_power: false,
       internet: false,
@@ -73,6 +80,7 @@ const SearchFilters: React.FC = () => {
       rooms: "",
       gender: "",
       payment_method: "",
+      listing_type: "",
       services: {
         solar_power: false,
         internet: false,
@@ -84,70 +92,73 @@ const SearchFilters: React.FC = () => {
     dispatch(filterApartments({}));
   };
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6 transition-all duration-500 ease-in-out">
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-4 mb-4">
-          {/* مربع البحث */}
-          <div className="relative flex-grow">
-            <input
-              type="text"
-              name="search"
-              value={filters.search}
-              onChange={handleInputChange}
-              placeholder="ابحث عن موقع..."
-              className="w-full py-2 px-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            />
-            <SearchIcon className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />
-          </div>
+    <div className="bg-white rounded-xl shadow-md p-4 mb-6 transition-all duration-500 ease-in-out">
+      <form onSubmit={handleSubmit} className="space-y-3">
+        {/* مربع البحث */}
+        <div className="relative">
+          <input
+            type="text"
+            name="search"
+            value={filters.search}
+            onChange={handleInputChange}
+            placeholder="ابحث عن موقع..."
+            className="w-full py-3 px-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
+          />
+          <SearchIcon className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+        </div>
 
-          {/* زر الفلترة */}
+        {/* الأزرار */}
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
           <button
             type="button"
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-            className="flex items-center justify-center bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg hover:bg-yellow-200"
+            className="flex items-center justify-center w-full sm:w-auto bg-yellow-200 text-yellow-800 py-2 px-4 rounded-lg hover:bg-yellow-100 transition"
           >
-            <div className="w-fit ml-4">
-              {isFiltersOpen ? <ArrowUp /> : <ArrowDown />}
-            </div>
+            {isFiltersOpen ? (
+              <ArrowUp className="ml-2" />
+            ) : (
+              <ArrowDown className="ml-2" />
+            )}
             <SlidersIcon className="w-5 h-5 ml-1" />
             <span>فلترة</span>
           </button>
 
-          {/* زر البحث */}
           <button
             type="submit"
-            className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700"
+            className="w-full sm:w-auto bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-700 transition"
           >
             تطبيق الفلاتر
           </button>
+
           <button
-            onClick={() => {
-              dispatch(fetch_apartments());
-            }}
-            className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700"
+            type="button"
+            onClick={() => dispatch(fetch_apartments())}
+            className="w-full sm:w-auto flex items-center justify-center gap-4 bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-800 transition"
           >
+            <RefreshCwIcon />
             تحديث
           </button>
         </div>
 
+        {/* الفلاتر */}
         {isFiltersOpen && (
-          <div
-            className={`grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 p-4 bg-gray-50 rounded-lg
-              transition-all duration-500 ease-in-out`}
-          >
+          <div className="grid grid-cols-1 gap-4 mt-4 p-4 bg-gray-50 rounded-lg">
             {is_auth && (
-              <div className="flex gap-4 items-center justify-center">
-                <label className="block text-gray-700 mb-2">
-                  الشقق الخاصة بي
-                </label>
+              <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   id="my_apartments"
                   name="my_apartments"
                   checked={filters.my_apartments}
                   onChange={handle_my_apartments_filter}
-                  className="mr-2 size-5 mb-2"
+                  className="size-5"
                 />
+                <label
+                  htmlFor="my_apartments"
+                  className="text-gray-700 text-sm"
+                >
+                  الشقق الخاصة بي
+                </label>
               </div>
             )}
             <div>
@@ -164,6 +175,19 @@ const SearchFilters: React.FC = () => {
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">نوع الإعلان</label>
+              <select
+                name="listing_type"
+                value={filters.listing_type}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              >
+                <option value="">الكل</option>
+                <option value="sell">للبيع</option>
+                <option value="rent">للإيجار</option>
               </select>
             </div>
             <div>
@@ -271,7 +295,7 @@ const SearchFilters: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClearFilters}
-                className="text-gray-600 hover:text-yellow-600"
+                className="text-gray-600 hover:text-yellow-500"
               >
                 مسح الفلاتر
               </button>

@@ -37,38 +37,46 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-3 py-6">
+      {/* ✅ البحث والفلاتر */}
       <SearchFilters />
+
+      {/* ✅ التحميل */}
       {loading && (
-        <div className="text-center py-20">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-yellow-600 border-t-transparent"></div>
-          <p className="mt-2 text-gray-600">جاري التحميل...</p>
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-yellow-500 border-t-transparent"></div>
+          <p className="mt-3 text-gray-600 text-sm">جاري التحميل...</p>
         </div>
       )}
 
+      {/* ✅ لا توجد نتائج */}
       {!loading && filteredItems?.length === 0 && (
-        <div className="text-center py-20">
-          <BuildingIcon className="mx-auto h-16 w-16 text-gray-400" />
-          <h3 className="mt-2 text-xl font-medium text-gray-900">
+        <div className="flex flex-col items-center text-center py-16">
+          <BuildingIcon className="h-16 w-16 text-gray-400" />
+          <h3 className="mt-3 text-lg font-semibold text-gray-800">
             لا توجد شقق متطابقة مع البحث
           </h3>
-          <p className="mt-1 text-gray-500">
+          <p className="mt-1 text-gray-500 text-sm">
             حاول تغيير معايير البحث أو إزالة بعض الفلاتر
           </p>
         </div>
       )}
+
+      {/* ✅ النتائج */}
       {Array.isArray(filteredItems) && filteredItems.length > 0 && (
         <>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-3 text-sm">
             تم العثور على {filteredItems.length} شقة
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredItems.map((apartment) => (
               <ApartmentCard key={apartment?._id} apartment={apartment} />
             ))}
           </div>
         </>
       )}
+
+      {/* ✅ المودال للخطأ */}
       {error && (
         <Dialog.Root
           open={open}
@@ -77,11 +85,11 @@ const HomePage: React.FC = () => {
           }}
         >
           <Dialog.Portal>
-            {/* خلفية */}
-            <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+            {/* الخلفية */}
+            <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
 
             {/* المودال */}
-            <Dialog.Content className="fixed top-1/2 left-1/2 w-80 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 shadow-lg focus:outline-none">
+            <Dialog.Content className="fixed top-1/2 left-1/2 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 shadow-xl focus:outline-none">
               <div dir="rtl" className="flex justify-between items-center mb-4">
                 <Dialog.Title className="text-lg font-semibold text-red-600">
                   خطأ
@@ -92,12 +100,15 @@ const HomePage: React.FC = () => {
                   </button>
                 </Dialog.Close>
               </div>
-              <Dialog.Description dir="rtl" className="text-gray-700 mb-6">
+              <Dialog.Description
+                dir="rtl"
+                className="text-gray-700 text-sm leading-relaxed mb-6"
+              >
                 {error}
               </Dialog.Description>
 
               <Dialog.Close asChild>
-                <button className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors w-full">
+                <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors w-full">
                   إغلاق
                 </button>
               </Dialog.Close>

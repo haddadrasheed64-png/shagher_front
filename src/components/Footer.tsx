@@ -1,6 +1,11 @@
 import React from "react";
 import { useState } from "react";
+import { website_analytics } from "../store/apartmentsSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
+
 const Footer: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [copied, setCopied] = useState(false);
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -8,13 +13,19 @@ const Footer: React.FC = () => {
       setTimeout(() => setCopied(false), 1500); // إخفاء رسالة النسخ بعد 1.5 ثانية
     });
   };
+
+  const handle_my_number_copy = () => {
+    dispatch(website_analytics({ method: "my_number" }));
+    return copyToClipboard("0939551436");
+  };
+
   return (
     <footer className="bg-gray-100 py-6">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center md:items-start">
           {/* العنوان */}
           <div className="mb-4 md:mb-0 text-center md:text-left">
-            <h2 className="text-2xl font-bold text-yellow-600">شاغر</h2>
+            <h2 className="text-2xl font-bold text-yellow-500">شاغر</h2>
           </div>
 
           {/* خيارات التواصل */}
@@ -38,8 +49,8 @@ const Footer: React.FC = () => {
                 <span>واتس أب : 0939551436</span>
               </a>
               <button
-                onClick={() => copyToClipboard("0939551436")}
-                className="text-yellow-600 hover:text-yellow-600 mr-4 text-xs border border-yellow-600 p-1 px-3 rounded-md"
+                onClick={handle_my_number_copy}
+                className="text-yellow-500 hover:text-yellow-500 mr-4 text-xs border border-yellow-500 p-1 px-3 rounded-md"
                 title="نسخ الرقم"
               >
                 نسخ
@@ -53,7 +64,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* الحقوق */}
-          <div className="mt-6 text-center">
+          <div className="mt-2 text-center">
             <p className="text-gray-500 text-center">
               جميع الحقوق محفوظة &copy; {new Date().getFullYear()} - شاغر
             </p>

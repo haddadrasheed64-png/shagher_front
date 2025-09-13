@@ -3,7 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Apartment } from "../store/apartmentsSlice";
 import { delete_apartment } from "../store/apartmentsSlice";
-import { BedIcon, MapPinIcon, UsersIcon, BanknoteIcon } from "lucide-react";
+import {
+  BedIcon,
+  MapPinIcon,
+  UsersIcon,
+  BanknoteIcon,
+  LinkIcon,
+} from "lucide-react";
 import { AppDispatch, RootState } from "../store/store";
 
 // استيراد Radix Dialog
@@ -30,19 +36,42 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
     apartment && (
       <>
         <Link
+          onClick={() => {
+            const payload = JSON.stringify({
+              method: "click_on_apartment",
+              content: apartment._id,
+            });
+
+            navigator.sendBeacon(
+              "https://shagher.onrender.com/website",
+              new Blob([payload], { type: "application/json" })
+            );
+          }}
           to={`/apartment/${apartment._id}`}
           className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
         >
           <div
             className={`relative h-48 ${
               apartment.images[0].type == "video"
-                ? "bg-yellow-600 flex items-center justify-center"
+                ? "bg-yellow-500 flex items-center justify-center"
                 : ""
             }`}
           >
+            {/* صورة أو فيديو */}
             {apartment.images[0].type === "video" ? (
-              <div className="flex items-center justify-center">
-                <span className="text-white font-bold text-3xl">فيديو</span>
+              <div className="relative w-full h-48 bg-black rounded-lg shadow-md flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/40 rounded-lg"></div>
+                <div className="relative flex flex-col items-center text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-12 h-12 mb-2 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  <span className="text-sm font-medium">يوجد فيديو</span>
+                </div>
               </div>
             ) : (
               <img
@@ -51,10 +80,29 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
                   "/upload/q_30,f_auto/"
                 )}
                 alt={apartment.title}
-                className="w-full h-full object-cover"
+                crossOrigin="anonymous"
+                className="w-full h-48 object-cover rounded-lg shadow-sm"
+                loading="lazy"
               />
             )}
 
+            {/* زر نسخ الرابط - ظاهر دائماً */}
+            <button
+              onClick={(e) => {
+                e.preventDefault(); // منع انتقال الرابط
+                navigator.clipboard.writeText(
+                  `${window.location.origin}/apartment/${apartment._id}`
+                );
+
+                alert("تم نسخ رابط العقار");
+              }}
+              className="absolute top-2 left-2 bg-green-500 text-white p-2 rounded-md hover:bg-gray-700"
+            >
+              {/* أيقونة نسخ (من react-icons أو SVG عادي) */}
+              <LinkIcon />
+            </button>
+
+            {/* زر الحذف */}
             {apartments?.some((apt) => apt.apartment_id == apartment._id) &&
               is_auth && (
                 <button
@@ -67,10 +115,12 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
                   حذف
                 </button>
               )}
+
+            {/* زر التعديل */}
             {apartments?.some((apt) => apt.apartment_id == apartment._id) &&
               is_auth && (
                 <Link to={`/editapartment/${apartment._id}`}>
-                  <button className="  absolute top-2 right-20 bg-yellow-600 text-white px-2 py-1 rounded-md hover:bg-yellow-700 text-lg">
+                  <button className="absolute top-2 right-20 bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-700 text-lg">
                     تعديل
                   </button>
                 </Link>
@@ -99,11 +149,11 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
               </div>
             </div>
             <div className="mt-4 flex justify-between items-center">
-              <span className="text-lg font-bold text-yellow-600">
+              <span className="text-lg font-bold text-yellow-500">
                 {Number(apartment.rent).toLocaleString("en")} ليرة
               </span>
 
-              <button className="bg-yellow-600 text-white px-3 py-1 rounded-md text-sm hover:bg-yellow-200 transition-colors">
+              <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm hover:bg-yellow-200 transition-colors">
                 التفاصيل
               </button>
             </div>

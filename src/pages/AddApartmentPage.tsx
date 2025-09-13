@@ -222,9 +222,18 @@ const AddApartmentPage: React.FC = () => {
           rooms: formData.rooms,
           gender: formData.gender,
           listing_type: formData.listing_type,
-          rent: formData.listing_type === "rent" ? Number(String(formData.rent).replace(/,/g, "")) : undefined,
-          payment_method: formData.listing_type === "rent" ? formData.payment_method : undefined,
-          sale_price: formData.listing_type === "sell" ? Number(String(formData.sale_price).replace(/,/g, "")) : undefined,
+          rent:
+            formData.listing_type === "rent"
+              ? Number(String(formData.rent).replace(/,/g, ""))
+              : undefined,
+          payment_method:
+            formData.listing_type === "rent"
+              ? formData.payment_method
+              : undefined,
+          sale_price:
+            formData.listing_type === "sell"
+              ? Number(String(formData.sale_price).replace(/,/g, ""))
+              : undefined,
           currency: formData.currency,
           services: formData.services,
           description: formData.description,
@@ -270,8 +279,9 @@ const AddApartmentPage: React.FC = () => {
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${errors.title ? "border-red-500" : "border-gray-300"
-                      }`}
+                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
+                      errors.title ? "border-red-500" : "border-gray-300"
+                    }`}
                   />
                   {errors.title && (
                     <p className="text-red-500 text-sm mt-1">{errors.title}</p>
@@ -291,8 +301,9 @@ const AddApartmentPage: React.FC = () => {
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${errors.location ? "border-red-500" : "border-gray-300"
-                      }`}
+                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
+                      errors.location ? "border-red-500" : "border-gray-300"
+                    }`}
                   />
                   {errors.location && (
                     <p className="text-red-500 text-sm mt-1">
@@ -439,7 +450,10 @@ const AddApartmentPage: React.FC = () => {
 
                 {/* نوع الإدراج */}
                 <div>
-                  <label htmlFor="listing_type" className="block text-gray-700 mb-1">
+                  <label
+                    htmlFor="listing_type"
+                    className="block text-gray-700 mb-1"
+                  >
                     نوع الإعلان
                   </label>
                   <select
@@ -455,7 +469,10 @@ const AddApartmentPage: React.FC = () => {
                 </div>
                 {/* العملة */}
                 <div>
-                  <label htmlFor="currency" className="block text-gray-700 mb-1">
+                  <label
+                    htmlFor="currency"
+                    className="block text-gray-700 mb-1"
+                  >
                     العملة
                   </label>
                   <select
@@ -474,7 +491,10 @@ const AddApartmentPage: React.FC = () => {
                 {formData.listing_type === "rent" && (
                   <>
                     <div>
-                      <label htmlFor="rent" className="block text-gray-700 mb-1">
+                      <label
+                        htmlFor="rent"
+                        className="block text-gray-700 mb-1"
+                      >
                         قيمة الإيجار
                       </label>
                       <input
@@ -489,16 +509,22 @@ const AddApartmentPage: React.FC = () => {
                         }
                         onChange={(e) => {
                           // السماح فقط بالأرقام
-                          const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+                          const onlyNums = e.target.value.replace(
+                            /[^0-9]/g,
+                            ""
+                          );
                           handleInputChange({
                             target: { name: "rent", value: onlyNums },
                           } as React.ChangeEvent<HTMLInputElement>);
                         }}
-                        className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${errors.rent ? "border-red-500" : "border-gray-300"
-                          }`}
+                        className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
+                          errors.rent ? "border-red-500" : "border-gray-300"
+                        }`}
                       />
                       {errors.rent && (
-                        <p className="text-red-500 text-sm mt-1">{errors.rent}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.rent}
+                        </p>
                       )}
                     </div>
 
@@ -516,6 +542,7 @@ const AddApartmentPage: React.FC = () => {
                         onChange={handleInputChange}
                         className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                       >
+                        <option value="يومي">يومي</option>
                         <option value="شهري">شهري</option>
                         <option value="سلف 3 أشهر">سلف 3 أشهر</option>
                         <option value="سلف 6 أشهر">سلف 6 أشهر</option>
@@ -528,7 +555,10 @@ const AddApartmentPage: React.FC = () => {
                 {/* حقول البيع */}
                 {formData.listing_type === "sell" && (
                   <div>
-                    <label htmlFor="sale_price" className="block text-gray-700 mb-1">
+                    <label
+                      htmlFor="sale_price"
+                      className="block text-gray-700 mb-1"
+                    >
                       سعر البيع
                     </label>
                     <input
@@ -547,11 +577,14 @@ const AddApartmentPage: React.FC = () => {
                           target: { name: "sale_price", value: onlyNums },
                         } as React.ChangeEvent<HTMLInputElement>);
                       }}
-                      className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${errors.sale_price ? "border-red-500" : "border-gray-300"
-                        }`}
+                      className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
+                        errors.sale_price ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
                     {errors.sale_price && (
-                      <p className="text-red-500 text-sm mt-1">{errors.sale_price}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.sale_price}
+                      </p>
                     )}
                   </div>
                 )}
@@ -640,8 +673,9 @@ const AddApartmentPage: React.FC = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
-                className={`w-full text-sm p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${errors.description ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full text-sm p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
+                  errors.description ? "border-red-500" : "border-gray-300"
+                }`}
                 maxLength={100}
                 placeholder="ميزة معينة, شي رح يتغير أو رح يتجدد, شي عاطل, ملاحظات خاصة"
               />
@@ -669,8 +703,9 @@ const AddApartmentPage: React.FC = () => {
                     target: { name: "owner_phone", value: onlyNums },
                   } as React.ChangeEvent<HTMLInputElement>);
                 }}
-                className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${errors.owner_phone ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
+                  errors.owner_phone ? "border-red-500" : "border-gray-300"
+                }`}
               />
               {errors.owner_phone && (
                 <p className="text-red-500 text-sm mt-1">
@@ -681,9 +716,30 @@ const AddApartmentPage: React.FC = () => {
 
             {/* Submit Button */}
             {loading ? (
-              <div className="text-center py-5">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-yellow-600 border-t-transparent"></div>
-                <p className="mt-2 text-gray-600">جاري التحميل...</p>
+              <div className="flex flex-col items-center justify-center py-8 space-y-3">
+                {/* لودر دائري */}
+                <div className="relative">
+                  <div className="h-12 w-12 rounded-full border-4 border-yellow-500 border-t-transparent animate-spin"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="h-2 w-2 bg-yellow-500 rounded-full animate-ping"></span>
+                  </div>
+                </div>
+
+                {/* نص جاري التحميل */}
+                <p className="text-gray-700 font-medium">جاري التحميل...</p>
+
+                {/* نقاط نابضة لزيادة الحيوية */}
+                <div className="flex space-x-1 rtl:space-x-reverse">
+                  <span className="h-2 w-2 bg-yellow-500 rounded-full animate-bounce"></span>
+                  <span className="h-2 w-2 bg-yellow-500 rounded-full animate-bounce delay-150"></span>
+                  <span className="h-2 w-2 bg-yellow-500 rounded-full animate-bounce delay-300"></span>
+                </div>
+
+                {/* تنبيه إضافي */}
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  ملاحظة: في حال رفع فيديو ممكن تستغرق العملية وقت أطول من
+                  المعتاد
+                </p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center">
@@ -691,15 +747,17 @@ const AddApartmentPage: React.FC = () => {
                   disabled={Number(limit) === 0}
                   type="submit"
                   className={`px-6 py-2 rounded-lg items-center justify-center 
-    ${Number(limit) === 0
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-yellow-600 hover:bg-yellow-700 text-white"
-                    }`}
+        ${
+          Number(limit) === 0
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-yellow-500 hover:bg-yellow-600 text-white shadow-sm transition"
+        }`}
                 >
                   إضافة الشقة
                 </button>
               </div>
             )}
+
             {error && (
               <div className="text-center py-5">
                 <p className="text-red-600">{error}</p>

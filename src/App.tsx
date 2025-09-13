@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import HomePage from "./pages/HomePage";
+import { Visit_Hook } from "./hooks/visit";
 import ApartmentDetailPage from "./pages/ApartmentDetailPage";
 import AddApartmentPage from "./pages/AddApartmentPage";
 import Header from "./components/Header";
@@ -9,6 +10,7 @@ import Footer from "./components/Footer";
 import Login from "./pages/Login";
 import Edit_Apartment_Page from "./pages/Edit_Apartment";
 export function App() {
+  Visit_Hook();
   return (
     <Provider store={store}>
       <div

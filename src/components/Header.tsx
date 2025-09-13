@@ -21,7 +21,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
 
-        <h1 className="text-2xl md:text-3xl font-bold text-yellow-600">شاغر</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-yellow-500">شاغر</h1>
 
         {/* زر القائمة في الموبايل */}
         <button
@@ -39,7 +39,7 @@ const Header: React.FC = () => {
         <nav className="hidden md:flex items-center gap-6">
           <Link
             to="/"
-            className="flex items-center text-gray-700 hover:text-yellow-600"
+            className="flex items-center text-gray-700 hover:text-yellow-500"
           >
             <HomeIcon className="w-5 h-5 ml-1" />
             <span>الرئيسية</span>
@@ -47,7 +47,7 @@ const Header: React.FC = () => {
           {is_auth && (
             <Link
               to="/add-apartment"
-              className="flex items-center text-gray-700 hover:text-yellow-600"
+              className="flex items-center text-gray-700 hover:text-yellow-500"
             >
               <PlusIcon className="w-5 h-5 ml-1" />
               <span>إضافة شقة</span>
@@ -56,14 +56,14 @@ const Header: React.FC = () => {
 
           {!is_auth ? (
             <Link to={"/login"}>
-              <button className="flex items-center bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">
+              <button className="flex items-center bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-700">
                 <UserIcon className="w-5 h-5 ml-1" />
                 <span className="text-sm">تسجيل الدخول لإضافة الشقق</span>
               </button>
             </Link>
           ) : (
             <button
-              className="flex items-center text-gray-700 hover:text-yellow-600"
+              className="flex items-center text-gray-700 hover:text-yellow-500"
               onClick={() => {
                 dispatch(logout());
               }}
@@ -81,7 +81,7 @@ const Header: React.FC = () => {
           <nav className="flex flex-col p-4 gap-4">
             <Link
               to="/"
-              className="flex items-center text-gray-700 hover:text-yellow-600"
+              className="flex items-center text-gray-700 hover:text-yellow-500"
               onClick={() => setMenuOpen(false)}
             >
               <HomeIcon className="w-5 h-5 ml-1" />
@@ -90,7 +90,7 @@ const Header: React.FC = () => {
             {is_auth && (
               <Link
                 to="/add-apartment"
-                className="flex items-center text-gray-700 hover:text-yellow-600"
+                className="flex items-center text-gray-700 hover:text-yellow-500"
                 onClick={() => setMenuOpen(false)}
               >
                 <PlusIcon className="w-5 h-5 ml-1" />
@@ -99,14 +99,14 @@ const Header: React.FC = () => {
             )}
             {!is_auth ? (
               <Link to={"/login"}>
-                <button className="flex items-center bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">
+                <button className="flex items-center bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-700">
                   <UserIcon className="w-5 h-5 ml-1" />
                   <span className="text-sm">تسجيل الدخول لإضافة الشقق</span>
                 </button>
               </Link>
             ) : (
               <button
-                className="flex items-center text-gray-700 hover:text-yellow-600"
+                className="flex items-center text-gray-700 hover:text-yellow-500"
                 onClick={() => {
                   dispatch(logout());
                 }}

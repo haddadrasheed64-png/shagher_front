@@ -76,7 +76,7 @@ export default function Login() {
         </div>
       )}
 
-      <h1 className="text-2xl font-bold text-yellow-600 mb-6 text-center">
+      <h1 className="text-2xl font-bold text-yellow-500 mb-6 text-center">
         تسجيل الدخول
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -182,7 +182,7 @@ export default function Login() {
         <button
           disabled={loading}
           type="submit"
-          className="w-full bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition"
+          className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition"
         >
           {loading ? (
             <div className="flex items-center justify-center">

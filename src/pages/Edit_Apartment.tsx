@@ -102,7 +102,7 @@ const Edit_Apartment_Page: React.FC = () => {
         <div className="mb-6">
           <Link
             to="/"
-            className="flex items-center text-yellow-600 hover:underline"
+            className="flex items-center text-yellow-500 hover:underline"
           >
             <ArrowRightIcon className="w-4 h-4 ml-1" />
             <span>العودة إلى القائمة</span>
@@ -263,14 +263,14 @@ const Edit_Apartment_Page: React.FC = () => {
             {/* Submit Button */}
             {loading ? (
               <div className="text-center py-5">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-yellow-600 border-t-transparent"></div>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-yellow-500 border-t-transparent"></div>
                 <p className="mt-2 text-gray-600">جاري التحميل...</p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center">
                 <button
                   type="submit"
-                  className={`px-6 py-2 rounded-lg items-center justify-cente bg-yellow-600 hover:bg-yellow-700 text-white`}
+                  className={`px-6 py-2 rounded-lg items-center justify-cente bg-yellow-500 hover:bg-yellow-700 text-white`}
                 >
                   حفظ التعديلات
                 </button>

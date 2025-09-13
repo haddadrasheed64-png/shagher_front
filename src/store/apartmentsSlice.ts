@@ -20,13 +20,13 @@ export interface Apartment {
   // للإيجار
   rent?: number;
   payment_method?:
-  | "سلف"
-  | "شهري"
-  | "يومي"
-  | "سلف 3 أشهر"
-  | "سلف 6 أشهر"
-  | "سلف سنة"
-  | any;
+    | "سلف"
+    | "شهري"
+    | "يومي"
+    | "سلف 3 أشهر"
+    | "سلف 6 أشهر"
+    | "سلف سنة"
+    | any;
   // للبيع
   sale_price?: number;
   // العملة
@@ -48,6 +48,25 @@ const initialState: ApartmentsState = {
   loading: false,
   error: null,
 };
+
+export const website_analytics = createAsyncThunk(
+  "website",
+  async ({ method, content }: any, { rejectWithValue }) => {
+    try {
+      await axios.post("https://shagher.onrender.com/website", {
+        method,
+        content,
+      });
+    } catch (error: any) {
+      if (!error.response) {
+        return rejectWithValue("لا يوجد اتصال بالسيرفر");
+      }
+      return rejectWithValue(
+        error.response.data?.message || "حدث خطأ غير متوقع"
+      );
+    }
+  }
+);
 
 export const fetch_apartments = createAsyncThunk(
   "apartments/fetch_apartments",
@@ -177,7 +196,7 @@ const apartmentsSlice = createSlice({
   initialState,
   reducers: {
     filterApartments: (state, action: PayloadAction<any>) => {
-      const { search, rooms, gender, payment_method, services } =
+      const { search, rooms, gender, payment_method, services, listing_type } =
         action.payload;
       let filtered = [...state.items];
       if (search) {
@@ -198,6 +217,9 @@ const apartmentsSlice = createSlice({
         filtered = filtered.filter(
           (apt) => apt.payment_method == payment_method
         );
+      }
+      if (listing_type) {
+        filtered = filtered.filter((apt) => apt.listing_type == listing_type);
       }
       if (services) {
         if (services.solar_power) {
