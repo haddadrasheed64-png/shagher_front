@@ -19,6 +19,9 @@ const Edit_Apartment_Page: React.FC = () => {
   const [formData, setFormData] = useState<any>({
     gender: apartment?.gender || "ذكور أو إناث",
     rent: apartment?.rent || Number(""),
+    listing_type: apartment?.listing_type || "",
+    sale_price: apartment?.sale_price || Number(""),
+    currency: apartment?.currency || "SYP",
     payment_method: apartment?.payment_method || "شهري",
     services: {
       main_water: apartment?.services.main_water || false,
@@ -28,6 +31,8 @@ const Edit_Apartment_Page: React.FC = () => {
     description: apartment?.description || "",
     owner_phone: apartment?.owner_phone || "",
   });
+
+  console.log(formData);
   const { error, loading } = useSelector(
     (state: RootState) => state.apartments
   );
@@ -87,6 +92,9 @@ const Edit_Apartment_Page: React.FC = () => {
         services: formData.services,
         description: formData.description,
         owner_phone: formData.owner_phone,
+        listing_type: formData.listing_type,
+        currency: formData.currency,
+        sale_price: formData.sale_price,
       })
     );
     navigate("/");
@@ -108,65 +116,147 @@ const Edit_Apartment_Page: React.FC = () => {
             <span>العودة إلى القائمة</span>
           </Link>
         </div>
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">
-          تعديل معلومات الشقة
-        </h2>
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <form onSubmit={handleSubmit}>
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                تفاصيل الشقة
+                تفاصيل العقار
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label htmlFor="gender" className="block text-gray-700 mb-1">
-                    مناسب لـ
-                  </label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  >
-                    <option value="ذكور">ذكور</option>
-                    <option value="إناث">إناث</option>
-                    <option value="ذكور أو إناث">ذكور أو إناث</option>
-                    <option value="عائلات">عائلات</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="rent" className="block text-gray-700 mb-1">
-                    قيمة الإيجار بالليرة السورية
-                  </label>
-                  <input
-                    type="text"
-                    id="rent"
-                    name="rent"
-                    inputMode="numeric"
-                    value={
-                      formData.rent
-                        ? Number(formData.rent).toLocaleString("en")
-                        : ""
-                    }
-                    onChange={(e) => {
-                      // السماح فقط بالأرقام
-                      const onlyNums = e.target.value.replace(/[^0-9]/g, "");
-                      handleInputChange({
-                        target: { name: "rent", value: onlyNums },
-                      } as React.ChangeEvent<HTMLInputElement>);
-                    }}
-                    className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
-                      errors.rent ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.rent && (
-                    <p className="text-red-500 text-sm mt-1">{errors.rent}</p>
-                  )}
-                </div>
 
-                <div>
+              {/* listing_type */}
+              <div className="mb-4">
+                <label
+                  htmlFor="listing_type"
+                  className="block text-gray-700 mb-1"
+                >
+                  نوع العرض
+                </label>
+                <select
+                  id="listing_type"
+                  name="listing_type"
+                  value={formData.listing_type}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                >
+                  <option value="">اختر</option>
+                  <option value="rent">إيجار</option>
+                  <option value="sell">بيع</option>
+                </select>
+              </div>
+
+              {/* Gender + Rent + Sale Price */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                {formData.listing_type == "rent" && (
+                  <div>
+                    <label
+                      htmlFor="gender"
+                      className="block text-gray-700 mb-1"
+                    >
+                      مناسب لـ
+                    </label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    >
+                      <option value="ذكور">ذكور</option>
+                      <option value="إناث">إناث</option>
+                      <option value="ذكور أو إناث">ذكور أو إناث</option>
+                      <option value="عائلات">عائلات</option>
+                    </select>
+                  </div>
+                )}
+
+                {formData.listing_type === "rent" && (
+                  <div>
+                    <label htmlFor="rent" className="block text-gray-700 mb-1">
+                      قيمة الإيجار
+                    </label>
+                    <input
+                      type="text"
+                      id="rent"
+                      name="rent"
+                      inputMode="numeric"
+                      value={
+                        formData.rent
+                          ? Number(formData.rent).toLocaleString("en")
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+                        handleInputChange({
+                          target: { name: "rent", value: onlyNums },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                      }}
+                      className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
+                        errors.rent ? "border-red-500" : "border-gray-300"
+                      }`}
+                    />
+                    {errors.rent && (
+                      <p className="text-red-500 text-sm mt-1">{errors.rent}</p>
+                    )}
+                  </div>
+                )}
+
+                {formData.listing_type === "sell" && (
+                  <div>
+                    <label
+                      htmlFor="sale_price"
+                      className="block text-gray-700 mb-1"
+                    >
+                      سعر البيع
+                    </label>
+                    <input
+                      type="text"
+                      id="sale_price"
+                      name="sale_price"
+                      inputMode="numeric"
+                      value={
+                        formData.sale_price
+                          ? Number(formData.sale_price).toLocaleString("en")
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+                        handleInputChange({
+                          target: { name: "sale_price", value: onlyNums },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                      }}
+                      className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 no-spinner ${
+                        errors.sale_price ? "border-red-500" : "border-gray-300"
+                      }`}
+                    />
+                    {errors.sale_price && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.sale_price}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="currency" className="block text-gray-700 mb-1">
+                  العملة
+                </label>
+                <select
+                  id="currency"
+                  name="currency"
+                  value={formData.currency}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                >
+                  <option value="SYP">ليرة سورية</option>
+                  <option value="USD">دولار</option>
+                </select>
+              </div>
+
+              {/* Payment method */}
+              {formData.listing_type === "rent" && (
+                <div className="mb-4">
                   <label
                     htmlFor="payment_method"
                     className="block text-gray-700 mb-1"
@@ -180,7 +270,6 @@ const Edit_Apartment_Page: React.FC = () => {
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   >
-                    {" "}
                     <option value="يومي">يومي</option>
                     <option value="شهري">شهري</option>
                     <option value="سلف 3 أشهر">سلف 3 أشهر</option>
@@ -188,7 +277,9 @@ const Edit_Apartment_Page: React.FC = () => {
                     <option value="سلف سنة">سلف سنة</option>
                   </select>
                 </div>
-              </div>
+              )}
+
+              {/* Services */}
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2">خدمات إضافية</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -205,37 +296,38 @@ const Edit_Apartment_Page: React.FC = () => {
                       مياه رئيسية
                     </label>
                   </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="office"
-                    name="services.office"
-                    checked={formData.services.office}
-                    onChange={handleCheckboxChange}
-                    className="ml-2"
-                  />
-                  <label htmlFor="office" className="text-gray-700">
-                    يدار عبر مكتب عقاري
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="secure_month"
-                    name="services.secure_month"
-                    checked={formData.services.secure_month}
-                    onChange={handleCheckboxChange}
-                    className="ml-2"
-                  />
-                  <label htmlFor="secure_month" className="text-gray-700">
-                    يتطلب دفع تأمين
-                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="office"
+                      name="services.office"
+                      checked={formData.services.office}
+                      onChange={handleCheckboxChange}
+                      className="ml-2"
+                    />
+                    <label htmlFor="office" className="text-gray-700">
+                      يدار عبر مكتب عقاري
+                    </label>
+                  </div>
+                  {formData.listing_type == "rent" && (
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="secure_month"
+                        name="services.secure_month"
+                        checked={formData.services.secure_month}
+                        onChange={handleCheckboxChange}
+                        className="ml-2"
+                      />
+                      <label htmlFor="secure_month" className="text-gray-700">
+                        يتطلب دفع تأمين
+                      </label>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+
             {/* Description */}
             <div className="mb-4">
               <label htmlFor="description" className="block text-gray-700 mb-1">
@@ -260,6 +352,29 @@ const Edit_Apartment_Page: React.FC = () => {
               )}
             </div>
 
+            {/* Owner phone */}
+            <div className="mb-4">
+              <label htmlFor="owner_phone" className="block text-gray-700 mb-1">
+                رقم التواصل
+              </label>
+              <input
+                type="text"
+                id="owner_phone"
+                name="owner_phone"
+                value={"0" + formData.owner_phone}
+                onChange={handleInputChange}
+                className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
+                  errors.owner_phone ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="09XXXXXXXX"
+              />
+              {errors.owner_phone && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.owner_phone}
+                </p>
+              )}
+            </div>
+
             {/* Submit Button */}
             {loading ? (
               <div className="text-center py-5">
@@ -270,12 +385,13 @@ const Edit_Apartment_Page: React.FC = () => {
               <div className="flex flex-col items-center justify-center">
                 <button
                   type="submit"
-                  className={`px-6 py-2 rounded-lg items-center justify-cente bg-yellow-500 hover:bg-yellow-700 text-white`}
+                  className="px-6 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-700 text-white"
                 >
                   حفظ التعديلات
                 </button>
               </div>
             )}
+
             {error && (
               <div className="text-center py-5">
                 <p className="text-red-600">{error}</p>

@@ -46,7 +46,7 @@ const ApartmentDetailPage: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          الشقة غير موجودة
+          العقار غير موجودة
         </h2>
         <Link to="/" className="text-yellow-500 hover:underline">
           العودة إلى الصفحة الرئيسية
@@ -175,16 +175,18 @@ const ApartmentDetailPage: React.FC = () => {
               <BedIcon className="w-6 h-6 text-yellow-500 ml-2" />
               <div>
                 <p className="text-sm text-gray-500">عدد الغرف</p>
-                <p className="font-semibold">{apartment.rooms} غرف</p>
+                <p className="font-semibold">{apartment.rooms} </p>
               </div>
             </div>
-            <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
-              <UsersIcon className="w-6 h-6 text-yellow-500 ml-2" />
-              <div>
-                <p className="text-sm text-gray-500">مناسب لـ</p>
-                <p className="font-semibold">{apartment.gender}</p>
+            {apartment.listing_type == "rent" && (
+              <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
+                <UsersIcon className="w-6 h-6 text-yellow-500 ml-2" />
+                <div>
+                  <p className="text-sm text-gray-500">مناسب لـ</p>
+                  <p className="font-semibold">{apartment.gender}</p>
+                </div>
               </div>
-            </div>
+            )}
             {apartment.listing_type === "rent" && (
               <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
                 <BanknoteIcon className="w-6 h-6 text-yellow-500 ml-2" />
@@ -194,15 +196,17 @@ const ApartmentDetailPage: React.FC = () => {
                 </div>
               </div>
             )}
-            <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
-              <ShieldIcon className="w-6 h-6 text-yellow-500 ml-2" />
-              <div>
-                <p className="text-sm text-gray-500">تأمين</p>
-                <p className="font-semibold">
-                  {apartment.services.secure_month ? "مطلوب" : "غير مطلوب"}
-                </p>
+            {apartment.listing_type == "rent" && (
+              <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
+                <ShieldIcon className="w-6 h-6 text-yellow-500 ml-2" />
+                <div>
+                  <p className="text-sm text-gray-500">تأمين</p>
+                  <p className="font-semibold">
+                    {apartment.services.secure_month ? "مطلوب" : "غير مطلوب"}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
           {/* services */}
           <div className="mt-8">

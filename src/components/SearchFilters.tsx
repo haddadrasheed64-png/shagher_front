@@ -101,7 +101,7 @@ const SearchFilters: React.FC = () => {
             name="search"
             value={filters.search}
             onChange={handleInputChange}
-            placeholder="ابحث عن موقع..."
+            placeholder="ابحث عن عقار...."
             className="w-full py-3 px-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
           />
           <SearchIcon className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
@@ -190,37 +190,41 @@ const SearchFilters: React.FC = () => {
                 <option value="rent">للإيجار</option>
               </select>
             </div>
-            <div>
-              <label className="block text-gray-700 mb-2">مناسب لـ</label>
-              <select
-                name="gender"
-                value={filters.gender}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              >
-                <option value="">الكل</option>
-                <option value="ذكور">ذكور</option>
-                <option value="إناث">إناث</option>
-                <option value="ذكور أو إناث">ذكور أو إناث</option>
-                <option value="عائلات">عائلات</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-gray-700 mb-2">طريقة الدفع</label>
-              <select
-                name="payment_method"
-                value={filters.payment_method}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              >
-                <option value="">الكل</option>
-                <option value="يومي">يومي</option>
-                <option value="شهري">شهري</option>
-                <option value="سلف 3 أشهر">سلف 3 أشهر</option>
-                <option value="سلف 6 أشهر">سلف 6 أشهر</option>
-                <option value="سلف سنة">سلف سنة</option>
-              </select>
-            </div>
+            {filters.listing_type == "rent" && (
+              <div>
+                <label className="block text-gray-700 mb-2">مناسب لـ</label>
+                <select
+                  name="gender"
+                  value={filters.gender}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                >
+                  <option value="">الكل</option>
+                  <option value="ذكور">ذكور</option>
+                  <option value="إناث">إناث</option>
+                  <option value="ذكور أو إناث">ذكور أو إناث</option>
+                  <option value="عائلات">عائلات</option>
+                </select>
+              </div>
+            )}
+            {filters.listing_type == "rent" && (
+              <div>
+                <label className="block text-gray-700 mb-2">طريقة الدفع</label>
+                <select
+                  name="payment_method"
+                  value={filters.payment_method}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                >
+                  <option value="">الكل</option>
+                  <option value="يومي">يومي</option>
+                  <option value="شهري">شهري</option>
+                  <option value="سلف 3 أشهر">سلف 3 أشهر</option>
+                  <option value="سلف 6 أشهر">سلف 6 أشهر</option>
+                  <option value="سلف سنة">سلف سنة</option>
+                </select>
+              </div>
+            )}
             <div>
               <label className="block text-gray-700 mb-2">المميزات</label>
               <div className="space-y-2">
@@ -276,19 +280,21 @@ const SearchFilters: React.FC = () => {
                     بدون مكتب عقاري
                   </label>
                 </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="no_secure"
-                    name="no_secure"
-                    checked={filters.services.no_secure}
-                    onChange={handleCheckboxChange}
-                    className="ml-2"
-                  />
-                  <label htmlFor="no_secure" className="text-gray-600">
-                    بدون شهر تأمين
-                  </label>
-                </div>
+                {filters.listing_type == "rent" && (
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="no_secure"
+                      name="no_secure"
+                      checked={filters.services.no_secure}
+                      onChange={handleCheckboxChange}
+                      className="ml-2"
+                    />
+                    <label htmlFor="no_secure" className="text-gray-600">
+                      بدون دفع تأمين
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
             <div className="md:col-span-4 flex justify-end">

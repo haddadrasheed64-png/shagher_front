@@ -18,7 +18,7 @@ export interface Apartment {
   // نوع الإدراج
   listing_type: "sell" | "rent";
   // للإيجار
-  rent?: number;
+  rent: any;
   payment_method?:
     | "سلف"
     | "شهري"
@@ -163,6 +163,9 @@ export const edit_apartment = createAsyncThunk(
       services,
       description,
       owner_phone,
+      listing_type,
+      sale_price,
+      currency,
     }: any,
     { rejectWithValue }
   ) => {
@@ -177,6 +180,9 @@ export const edit_apartment = createAsyncThunk(
           owner_phone,
           services,
           description,
+          listing_type,
+          sale_price,
+          currency,
         }
       );
       return response.data;

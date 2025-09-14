@@ -27,7 +27,6 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
   );
 
   const [open, setOpen] = useState(false);
-
   const handleConfirmDelete = () => {
     dispatch(delete_apartment({ apartment_id: apartment._id, email: email }));
     setOpen(false);
@@ -142,12 +141,19 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
               </div>
               <div className="flex items-center text-gray-600">
                 <BanknoteIcon className="w-4 h-4 ml-1" />
-                <span className="text-sm">{apartment.payment_method}</span>
+                <span className="text-sm">
+                  {apartment.listing_type == "rent"
+                    ? apartment.payment_method
+                    : "للبيع"}
+                </span>
               </div>
             </div>
             <div className="mt-4 flex justify-between items-center">
               <span className="text-lg font-bold text-yellow-500">
-                {Number(apartment.rent).toLocaleString("en")} ليرة
+                {apartment.rent > 0
+                  ? Number(apartment.rent).toLocaleString("en")
+                  : Number(apartment.sale_price).toLocaleString("en")}{" "}
+                {apartment.currency}
               </span>
 
               <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm hover:bg-yellow-200 transition-colors">
@@ -168,8 +174,8 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
                 تأكيد الحذف
               </Dialog.Title>
               <Dialog.Description className="text-sm text-gray-600 mb-4">
-                هل أنت متأكد أنك تريد حذف هذه الشقة؟ هذا الإجراء لا يمكن التراجع
-                عنه
+                هل أنت متأكد أنك تريد حذف هذه العقار؟ هذا الإجراء لا يمكن
+                التراجع عنه
               </Dialog.Description>
               <div className="flex justify-between mt-4">
                 <button

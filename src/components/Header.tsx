@@ -1,19 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  HomeIcon,
-  PlusIcon,
-  UserIcon,
-  XIcon,
-  MoreHorizontal,
-  LogOutIcon,
-} from "lucide-react";
-import { logout } from "../store/user_slice";
-import { AppDispatch } from "../store/store";
+import { useSelector } from "react-redux";
+import { HomeIcon, PlusIcon, UserIcon, XIcon, Plus } from "lucide-react";
 const Header: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const { is_auth } = useSelector((state: any) => state.user);
   const [menuOpen, setMenuOpen] = useState(false);
   return (
@@ -25,13 +15,13 @@ const Header: React.FC = () => {
 
         {/* زر القائمة في الموبايل */}
         <button
-          className="md:hidden text-gray-700"
+          className="md:hidden text-yellow-500 "
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? (
             <XIcon className="w-6 h-6" />
           ) : (
-            <MoreHorizontal className="w-6 h-6" />
+            <Plus className="w-8 h-8" />
           )}
         </button>
 
@@ -62,7 +52,9 @@ const Header: React.FC = () => {
               </button>
             </Link>
           ) : (
-            <button
+            ""
+          )}
+          {/*<button
               className="flex items-center text-gray-700 hover:text-yellow-500"
               onClick={() => {
                 dispatch(logout());
@@ -70,8 +62,7 @@ const Header: React.FC = () => {
             >
               <LogOutIcon className="w-5 h-5 ml-1 text-red-500" />
               <span className="text-red-500">تسجيل الخروج</span>
-            </button>
-          )}
+            </button>*/}
         </nav>
       </div>
 
@@ -105,7 +96,9 @@ const Header: React.FC = () => {
                 </button>
               </Link>
             ) : (
-              <button
+              ""
+            )}
+            {/*<button
                 className="flex items-center text-gray-700 hover:text-yellow-500"
                 onClick={() => {
                   dispatch(logout());
@@ -113,8 +106,7 @@ const Header: React.FC = () => {
               >
                 <LogOutIcon className="w-5 h-5 ml-1 text-red-500" />
                 <span className="text-red-500">تسجيل الخروج</span>
-              </button>
-            )}
+              </button>*/}
           </nav>
         </div>
       )}

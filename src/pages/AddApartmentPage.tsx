@@ -109,7 +109,7 @@ const AddApartmentPage: React.FC = () => {
       newErrors.title = "يرجى إدخال عنوان للشقة";
     }
     if (!formData.location.trim()) {
-      newErrors.location = "يرجى إدخال موقع الشقة";
+      newErrors.location = "يرجى إدخال موقع العقار";
     }
     if (formData.listing_type === "rent") {
       if (!formData.rent || Number(formData.rent) <= 0) {
@@ -192,18 +192,20 @@ const AddApartmentPage: React.FC = () => {
           const formDataCloud = new FormData();
           formDataCloud.append("file", file); // الملف الأصلي
           formDataCloud.append("upload_preset", "my_unsigned_preset");
+          console.log("Uploading file:", file);
 
           const res = await fetch(
             "https://api.cloudinary.com/v1_1/dcvmfnhhk/video/upload",
             { method: "POST", body: formDataCloud }
           );
+          console.log("Response status:", res.status, res.statusText);
 
           if (!res.ok) throw new Error("فشل رفع الفيديو إلى Cloudinary");
 
           const data = await res.json();
 
-          // نسخة مضغوطة جاهزة للعرض (تحويل Cloudinary)
-          const compressedUrl = `https://res.cloudinary.com/dcvmfnhhk/video/upload/w_640,q_auto,f_mp4/${data.public_id}.mp4`;
+          const encodedId = encodeURIComponent(data.public_id);
+          const compressedUrl = `https://res.cloudinary.com/dcvmfnhhk/video/upload/w_640,q_auto,f_mp4/${encodedId}.mp4`;
 
           uploadedFiles.push({
             url: compressedUrl, // نستخدم الرابط المضغوط بدل الأصل
@@ -316,7 +318,7 @@ const AddApartmentPage: React.FC = () => {
             {/* Images */}
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                صور الشقة
+                صور العقار
               </h3>
 
               {/* معاينة الصور والفيديوهات */}
@@ -409,7 +411,7 @@ const AddApartmentPage: React.FC = () => {
             {/* Details */}
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                تفاصيل الشقة
+                تفاصيل العقار
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
@@ -725,9 +727,6 @@ const AddApartmentPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* نص جاري التحميل */}
-                <p className="text-gray-700 font-medium">جاري التحميل...</p>
-
                 {/* نقاط نابضة لزيادة الحيوية */}
                 <div className="flex space-x-1 rtl:space-x-reverse">
                   <span className="h-2 w-2 bg-yellow-500 rounded-full animate-bounce"></span>
@@ -753,7 +752,7 @@ const AddApartmentPage: React.FC = () => {
             : "bg-yellow-500 hover:bg-yellow-600 text-white shadow-sm transition"
         }`}
                 >
-                  إضافة الشقة
+                  إضافة العقار
                 </button>
               </div>
             )}
