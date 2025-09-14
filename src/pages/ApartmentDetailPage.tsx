@@ -335,7 +335,7 @@ const ApartmentDetailPage: React.FC = () => {
               {/* زر الاتصال */}
               <a
                 onClick={handle_owner_phone_copy}
-                href={`tel:${apartment.owner_phone}`}
+                href={`tel:${"0" + apartment.owner_phone}`}
                 className="flex-1 flex justify-center items-center bg-yellow-500 text-white py-3 px-4 rounded-lg hover:bg-yellow-700"
               >
                 <PhoneIcon className="w-5 h-5 ml-2" />
