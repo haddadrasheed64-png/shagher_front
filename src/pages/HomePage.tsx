@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
         <div className="flex flex-col items-center text-center py-16">
           <BuildingIcon className="h-16 w-16 text-gray-400" />
           <h3 className="mt-3 text-lg font-semibold text-gray-800">
-            لا توجد شقق متطابقة مع البحث
+            لا توجد عقارات متطابقة مع البحث
           </h3>
           <p className="mt-1 text-gray-500 text-sm">
             حاول تغيير معايير البحث أو إزالة بعض الفلاتر
@@ -65,9 +65,6 @@ const HomePage: React.FC = () => {
       {/* ✅ النتائج */}
       {Array.isArray(filteredItems) && filteredItems.length > 0 && (
         <>
-          <p className="text-gray-600 mb-3 text-sm">
-            تم العثور على {filteredItems.length} شقة
-          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredItems.map((apartment) => (
               <ApartmentCard key={apartment?._id} apartment={apartment} />

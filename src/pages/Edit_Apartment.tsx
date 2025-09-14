@@ -74,7 +74,7 @@ const Edit_Apartment_Page: React.FC = () => {
       newErrors.rent = "يرجى إدخال قيمة إيجار صحيحة";
     }
     if (!formData.description.trim()) {
-      newErrors.description = "يرجى إدخال وصف للشقة";
+      newErrors.description = "يرجى إدخال وصف للعقار";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

@@ -44,7 +44,7 @@ const SearchFilters: React.FC = () => {
         })
       );
     } else {
-      // رجع كل الشقق
+      // رجع كل العقارات
       dispatch(filterApartments({ ...filters, my_apartments: false }));
     }
   };
@@ -127,7 +127,7 @@ const SearchFilters: React.FC = () => {
             type="submit"
             className="w-full sm:w-auto bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-700 transition"
           >
-            تطبيق الفلاتر
+            {filters.search !== "" ? "بحث" : "تطبيق الفلاتر"}
           </button>
 
           <button
@@ -157,7 +157,7 @@ const SearchFilters: React.FC = () => {
                   htmlFor="my_apartments"
                   className="text-gray-700 text-sm"
                 >
-                  الشقق الخاصة بي
+                  العقارات الخاصة بي
                 </label>
               </div>
             )}

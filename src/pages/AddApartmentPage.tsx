@@ -106,7 +106,7 @@ const AddApartmentPage: React.FC = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.title.trim()) {
-      newErrors.title = "يرجى إدخال عنوان للشقة";
+      newErrors.title = "يرجى إدخال عنوان للعقار";
     }
     if (!formData.location.trim()) {
       newErrors.location = "يرجى إدخال موقع العقار";
@@ -124,7 +124,7 @@ const AddApartmentPage: React.FC = () => {
       }
     }
     if (!formData.description.trim()) {
-      newErrors.description = "يرجى إدخال وصف للشقة";
+      newErrors.description = "يرجى إدخال وصف للعقار";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -259,11 +259,11 @@ const AddApartmentPage: React.FC = () => {
       <div className="max-w-3xl mx-auto">
         {Number(limit) === 0 ? (
           <p className="text-red-600 text-xl mt-2 text-center">
-            لقد استهلكت الحد المجاني المسموح به لإضافة الشقق
+            لقد استهلكت الحد المجاني المسموح به لإضافة العقارات
           </p>
         ) : (
           <h2 className="text-3xl font-bold text-gray-800 mb-6">
-            إضافة شقة جديدة
+            إضافة عقار جديدة
           </h2>
         )}
         <div className="bg-white rounded-lg shadow-md p-6">
