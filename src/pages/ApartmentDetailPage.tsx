@@ -27,7 +27,7 @@ const ApartmentDetailPage: React.FC = () => {
   const { items, loading } = useSelector(
     (state: RootState) => state.apartments
   );
-  const apartment = items.find((apt) => apt._id == _id);
+  const apartment: any = items.find((apt) => apt._id == _id);
   const [activeImage, setActiveImage] = useState(0);
 
   const handle_owner_phone_copy = () => {
@@ -119,7 +119,7 @@ const ApartmentDetailPage: React.FC = () => {
 
           {apartment.images.length > 1 && (
             <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 rtl:space-x-reverse">
-              {apartment.images.map((_, index) => (
+              {apartment.images.map((_: any, index: any) => (
                 <button
                   key={index}
                   onClick={() => setActiveImage(index)}
@@ -135,7 +135,7 @@ const ApartmentDetailPage: React.FC = () => {
         {/* Thumbnail Gallery */}
         {apartment.images.length > 1 && (
           <div className="flex overflow-x-auto p-4 space-x-2 rtl:space-x-reverse">
-            {apartment.images.map((media, index) => (
+            {apartment.images.map((media: any, index: any) => (
               <button
                 key={index}
                 onClick={() => setActiveImage(index)}
