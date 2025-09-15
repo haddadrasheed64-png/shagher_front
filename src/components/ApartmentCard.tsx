@@ -31,7 +31,6 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
     dispatch(delete_apartment({ apartment_id: apartment._id, email: email }));
     setOpen(false);
   };
-
   return (
     apartment && (
       <div
@@ -44,7 +43,9 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
       >
         <Link
           to={`/apartment/${apartment._id}`}
-          className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          className={`block ${
+            apartment.status == "VIP" ? "bg-yellow-400 p-2" : "bg-white"
+          } rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow`}
         >
           <div
             className={`relative h-48 ${
@@ -123,40 +124,76 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment }) => {
               )}
           </div>
           <div className="p-4">
-            <h3 className="text-xl font-bold mb-2 text-gray-800">
+            <h3
+              className={`text-xl font-bold mb-2 ${
+                apartment.status === "VIP" ? "text-black" : "text-gray-800"
+              }`}
+            >
               {apartment.title}
             </h3>
-            <div className="flex items-center text-gray-600 mb-2">
+
+            <div
+              className={`flex items-center mb-2 ${
+                apartment.status === "VIP" ? "text-black" : "text-gray-600"
+              }`}
+            >
               <MapPinIcon className="w-4 h-4 ml-1" />
               <span className="text-sm">{apartment.location}</span>
             </div>
+
             <div className="flex justify-between items-center mt-4">
-              <div className="flex items-center text-gray-600">
+              <div
+                className={`flex items-center ${
+                  apartment.status === "VIP" ? "text-black" : "text-gray-600"
+                }`}
+              >
                 <BedIcon className="w-4 h-4 ml-1" />
                 <span className="text-sm">{apartment.rooms} غرف</span>
               </div>
-              <div className="flex items-center text-gray-600">
+
+              <div
+                className={`flex items-center ${
+                  apartment.status === "VIP" ? "text-black" : "text-gray-600"
+                }`}
+              >
                 <UsersIcon className="w-4 h-4 ml-1" />
                 <span className="text-sm">{apartment.gender}</span>
               </div>
-              <div className="flex items-center text-gray-600">
+
+              <div
+                className={`flex items-center ${
+                  apartment.status === "VIP" ? "text-black" : "text-gray-600"
+                }`}
+              >
                 <BanknoteIcon className="w-4 h-4 ml-1" />
                 <span className="text-sm">
-                  {apartment.listing_type == "rent"
+                  {apartment.listing_type === "rent"
                     ? apartment.payment_method
                     : "للبيع"}
                 </span>
               </div>
             </div>
+
             <div className="mt-4 flex justify-between items-center">
-              <span className="text-lg font-bold text-yellow-500">
+              <span
+                className={`text-lg font-bold ${
+                  apartment.status === "VIP" ? "text-black" : "text-yellow-500"
+                }`}
+              >
                 {apartment.rent > 0
                   ? Number(apartment.rent).toLocaleString("en")
                   : Number(apartment.sale_price).toLocaleString("en")}{" "}
                 {apartment.currency}
               </span>
 
-              <button className="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm hover:bg-yellow-200 transition-colors">
+              <button
+                className={`px-3 py-1 rounded-md text-sm transition-colors
+        ${
+          apartment.status === "VIP"
+            ? "bg-white text-black hover:bg-gray-800"
+            : "bg-yellow-500 text-white hover:bg-yellow-600"
+        }`}
+              >
                 التفاصيل
               </button>
             </div>

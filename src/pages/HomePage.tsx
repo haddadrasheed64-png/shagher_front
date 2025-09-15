@@ -38,10 +38,8 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-3 py-6">
-      {/* ✅ البحث والفلاتر */}
       <SearchFilters />
 
-      {/* ✅ التحميل */}
       {loading && (
         <div className="flex flex-col items-center justify-center py-16">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-yellow-500 border-t-transparent"></div>
@@ -66,9 +64,15 @@ const HomePage: React.FC = () => {
       {Array.isArray(filteredItems) && filteredItems.length > 0 && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {filteredItems.map((apartment) => (
-              <ApartmentCard key={apartment?._id} apartment={apartment} />
-            ))}
+            {filteredItems
+              .slice() // نعمل نسخة حتى ما نغيّر بالـ state الأصلي
+              .sort((a, b) => {
+                const priority: any = { VIP: 1, SIGN: 2, NOT_SIGN: 3 };
+                return priority[a.status] - priority[b.status];
+              })
+              .map((apartment) => (
+                <ApartmentCard key={apartment?._id} apartment={apartment} />
+              ))}
           </div>
         </>
       )}

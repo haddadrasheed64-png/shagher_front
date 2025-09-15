@@ -35,6 +35,7 @@ export interface Apartment {
   description: string;
   owner_phone: any;
   email?: string;
+  status: string;
 }
 interface ApartmentsState {
   items: Apartment[];

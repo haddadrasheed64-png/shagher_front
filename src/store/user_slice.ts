@@ -26,6 +26,7 @@ export interface User_State {
   is_auth: boolean;
   limit: Number | unknown | undefined;
   apartments: [{ apartment_id: string }] | [];
+  VIP: boolean;
 }
 
 const stored_user = localStorage.getItem("user");
@@ -44,6 +45,7 @@ const initialState: User_State = {
   is_auth: user ? true : false,
   limit: user?.limit || 0,
   apartments: user?.apartments || [],
+  VIP: user?.VIP || false,
 };
 
 export const login = createAsyncThunk(
@@ -114,6 +116,7 @@ const user_slice = createSlice({
       state.error = null;
       state.is_auth = false;
       state.apartments = [];
+      state.VIP = false;
     },
   },
   extraReducers: (builder) => {
@@ -135,7 +138,7 @@ const user_slice = createSlice({
           state.is_auth = true;
           state.limit = action.payload.limit;
           state.apartments = action.payload.apartments;
-
+          state.VIP = action.payload.VIP || false;
           localStorage.setItem("user", JSON.stringify(action.payload));
         }
         state.error = null;
@@ -162,6 +165,7 @@ const user_slice = createSlice({
           state.phone_number = action.payload.phone_number;
           state.limit = action.payload.limit;
           state.apartments = action.payload.apartments;
+          state.VIP = action.payload.VIP || false;
         }
       })
       .addCase(get_user.rejected, (state, action) => {

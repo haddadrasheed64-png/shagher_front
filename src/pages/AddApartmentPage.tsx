@@ -61,7 +61,7 @@ const AddApartmentPage: React.FC = () => {
   const { error, loading } = useSelector(
     (state: RootState) => state.apartments
   );
-  const { limit, email } = useSelector((state: RootState) => state.user);
+  const { limit, email, VIP } = useSelector((state: RootState) => state.user);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -241,6 +241,7 @@ const AddApartmentPage: React.FC = () => {
           description: formData.description,
           owner_phone: formData.owner_phone,
           email: email,
+          status: !email ? "NOT_SIGN" : !VIP ? "SIGN" : "VIP",
         } as any)
       );
 
