@@ -24,7 +24,9 @@ const ApartmentDetailPage: React.FC = () => {
   const { _id } = useParams<{
     _id: string;
   }>();
-  const { items } = useSelector((state: RootState) => state.apartments);
+  const { items, loading } = useSelector(
+    (state: RootState) => state.apartments
+  );
   const apartment = items.find((apt) => apt._id == _id);
   const [activeImage, setActiveImage] = useState(0);
 
@@ -42,7 +44,7 @@ const ApartmentDetailPage: React.FC = () => {
     dispatch(fetch_apartments());
   }, []);
 
-  if (!apartment) {
+  if (!apartment && !loading) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -54,7 +56,26 @@ const ApartmentDetailPage: React.FC = () => {
       </div>
     );
   }
+  if (loading && !apartment) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 space-y-3">
+        {/* لودر دائري */}
+        <div className="relative">
+          <div className="h-12 w-12 rounded-full border-4 border-yellow-500 border-t-transparent animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="h-2 w-2 bg-yellow-500 rounded-full animate-ping"></span>
+          </div>
+        </div>
 
+        {/* نقاط نابضة لزيادة الحيوية */}
+        <div className="flex space-x-1 rtl:space-x-reverse">
+          <span className="h-2 w-2 bg-yellow-500 rounded-full animate-bounce"></span>
+          <span className="h-2 w-2 bg-yellow-500 rounded-full animate-bounce delay-150"></span>
+          <span className="h-2 w-2 bg-yellow-500 rounded-full animate-bounce delay-300"></span>
+        </div>
+      </div>
+    );
+  }
   const currencyLabel = apartment.currency === "USD" ? "دولار" : "ليرة";
 
   return (
