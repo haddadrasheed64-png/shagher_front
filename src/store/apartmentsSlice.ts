@@ -36,18 +36,21 @@ export interface Apartment {
   owner_phone: any;
   email?: string;
   status: string;
+  storage_index: number | string;
 }
 interface ApartmentsState {
   items: Apartment[];
   filteredItems: Apartment[];
   loading: boolean;
   error: string | null | unknown | any;
+  last_index: any;
 }
 const initialState: ApartmentsState = {
   items: [],
   filteredItems: [],
   loading: false,
   error: null,
+  last_index: null,
 };
 
 export const website_analytics = createAsyncThunk(
@@ -106,6 +109,8 @@ export const add_apartment = createAsyncThunk(
     description,
     owner_phone,
     email,
+    storage_index,
+    status,
   }: Apartment) => {
     try {
       const response = await axios.post(
@@ -125,6 +130,8 @@ export const add_apartment = createAsyncThunk(
           description: description,
           owner_phone: owner_phone,
           email: email,
+          storage_index: storage_index,
+          status: status,
         }
       );
       return response.data;
@@ -185,6 +192,25 @@ export const edit_apartment = createAsyncThunk(
           sale_price,
           currency,
         }
+      );
+      return response.data;
+    } catch (error: any) {
+      if (!error.response) {
+        return rejectWithValue("لا يوجد اتصال بالسيرفر");
+      }
+      return rejectWithValue(
+        error.response.data?.message || "حدث خطأ غير متوقع"
+      );
+    }
+  }
+);
+
+export const get_storage_index = createAsyncThunk(
+  "storage",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        "https://shagher.onrender.com/storageindex"
       );
       return response.data;
     } catch (error: any) {
@@ -332,6 +358,12 @@ const apartmentsSlice = createSlice({
         if (index !== -1) {
           state.items[index] = action.payload; // ✅ هيك فعليًا تعدل العنصر
         }
+      })
+      .addCase(get_storage_index.pending, (state) => {
+        state.last_index = null;
+      })
+      .addCase(get_storage_index.fulfilled, (state, action) => {
+        state.last_index = action.payload.storage;
       });
   },
 });

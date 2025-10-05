@@ -7,6 +7,7 @@ import { add_apartment } from "../store/apartmentsSlice";
 import { AppDispatch, RootState } from "../store/store";
 import { loading_fun } from "../store/apartmentsSlice";
 import { cleaning_error } from "../store/apartmentsSlice";
+import { get_storage_index } from "../store/apartmentsSlice";
 
 const AddApartmentPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,12 +59,16 @@ const AddApartmentPage: React.FC = () => {
     owner_phone: "",
   });
 
-  const { error, loading } = useSelector(
+  const { error, loading, last_index } = useSelector(
     (state: RootState) => state.apartments
   );
   const { limit, email } = useSelector((state: RootState) => state.user);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    dispatch(get_storage_index());
+  }, [dispatch]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -126,15 +131,41 @@ const AddApartmentPage: React.FC = () => {
     if (!formData.description.trim()) {
       newErrors.description = "يرجى إدخال وصف للعقار";
     }
+    if (!formData.images) {
+      newErrors.description = "يرجى رفع صورة على الأقل";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // ✅ التحقق المخصص من الصور/الفيديو
+    if (!formData.images || formData.images.length === 0) {
+      setErrors({ images: "يرجى رفع صورة أو فيديو واحد على الأقل" });
+      return;
+    }
+
+    // لو عندك validateForm() بيتحقق من باقي الحقول
     if (!validateForm()) return;
+
     dispatch(loading_fun());
 
     try {
+      // 👇 هنا تحدد لكل index أي cloud_name رح يستخدم
+      const storageMap: Record<number, string> = {
+        1: "dcvmfnhhk",
+        2: "dsfozgiyl",
+        3: "dz8vblydu",
+        4: "dsxnxeygp",
+        5: "dqkhjcpl1",
+        6: "dre87in0y",
+      };
+
+      const cloudName = storageMap[last_index];
+      if (!cloudName)
+        throw new Error(`Cloudinary storage ${last_index} غير معرف`);
+
       const uploadedFiles: {
         url: string;
         public_id: string;
@@ -175,7 +206,7 @@ const AddApartmentPage: React.FC = () => {
           formDataCloud.append("upload_preset", "my_unsigned_preset");
 
           const res = await fetch(
-            "https://api.cloudinary.com/v1_1/dcvmfnhhk/image/upload",
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             { method: "POST", body: formDataCloud }
           );
 
@@ -183,39 +214,37 @@ const AddApartmentPage: React.FC = () => {
 
           const data = await res.json();
           uploadedFiles.push({
-            url: data.secure_url, // الصورة الأصلية (مضغوطة مسبقاً)
+            url: data.secure_url,
             public_id: data.public_id,
             type: "image",
           });
         } else if (file.type.startsWith("video/")) {
           // ✅ فيديو
           const formDataCloud = new FormData();
-          formDataCloud.append("file", file); // الملف الأصلي
+          formDataCloud.append("file", file);
           formDataCloud.append("upload_preset", "my_unsigned_preset");
-          console.log("Uploading file:", file);
 
           const res = await fetch(
-            "https://api.cloudinary.com/v1_1/dcvmfnhhk/video/upload",
+            `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`,
             { method: "POST", body: formDataCloud }
           );
-          console.log("Response status:", res.status, res.statusText);
 
           if (!res.ok) throw new Error("فشل رفع الفيديو إلى Cloudinary");
 
           const data = await res.json();
-
           const encodedId = encodeURIComponent(data.public_id);
-          const compressedUrl = `https://res.cloudinary.com/dcvmfnhhk/video/upload/w_640,q_auto,f_mp4/${encodedId}.mp4`;
+
+          const compressedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/w_640,q_auto,f_mp4/${encodedId}.mp4`;
 
           uploadedFiles.push({
-            url: compressedUrl, // نستخدم الرابط المضغوط بدل الأصل
+            url: compressedUrl,
             public_id: data.public_id,
             type: "video",
           });
         }
       }
 
-      // إرسال البيانات مع الروابط للسيرفر
+      // إرسال البيانات مع الروابط والسطر الجديد storageIndex
       dispatch(
         add_apartment({
           title: formData.title,
@@ -242,6 +271,7 @@ const AddApartmentPage: React.FC = () => {
           owner_phone: formData.owner_phone,
           email: email,
           status: !email ? "NOT_SIGN" : "SIGN",
+          storage_index: last_index < 6 ? Number(last_index) + 1 : 1,
         } as any)
       );
 
@@ -264,7 +294,7 @@ const AddApartmentPage: React.FC = () => {
           </p>
         ) : (
           <h2 className="text-3xl font-bold text-gray-800 mb-6">
-            إضافة عقار جديدة
+            إضافة عقار جديد
           </h2>
         )}
         <div className="bg-white rounded-lg shadow-md p-6">
