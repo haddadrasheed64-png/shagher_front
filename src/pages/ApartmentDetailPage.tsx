@@ -360,7 +360,6 @@ const ApartmentDetailPage: React.FC = () => {
             <div className="flex flex-col md:flex-row gap-4">
               {/* زر الاتصال */}
               <a
-                onClick={handle_owner_phone_copy}
                 href={`tel:${"0" + apartment.owner_phone}`}
                 className="flex-1 flex justify-center items-center bg-yellow-500 text-white py-3 px-4 rounded-lg hover:bg-yellow-700"
               >
@@ -368,20 +367,19 @@ const ApartmentDetailPage: React.FC = () => {
                 <span>اتصل الآن</span>
               </a>
 
-              {/* زر نسخ الرقم */}
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    String("0" + apartment.owner_phone)
-                  );
-                  alert(`تم نسخ الرقم: ${"0" + apartment.owner_phone}`);
-                  handle_owner_phone_copy();
-                }}
-                className="flex-1 flex justify-center items-center bg-white border border-yellow-500 text-yellow-500 py-3 px-4 rounded-lg hover:bg-yellow-50"
+              {/* زر واتساب */}
+              <a
+                href={`https://wa.me/${
+                  "9639" + String(apartment.owner_phone).slice(1)
+                }`}
+                target="_blank"
+                onClick={handle_owner_phone_copy}
+                rel="noopener noreferrer"
+                className="flex-1 flex justify-center items-center bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-700"
               >
                 <MessageSquareIcon className="w-5 h-5 ml-2" />
-                <span>نسخ رقم التواصل</span>
-              </button>
+                <span>واتساب</span>
+              </a>
             </div>
           </div>
         </div>
