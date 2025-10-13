@@ -140,19 +140,18 @@ const AddApartmentPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ التحقق المخصص من الصور/الفيديو
+    // ✅ التحقق من وجود ملفات
     if (!formData.images || formData.images.length === 0) {
       setErrors({ images: "يرجى رفع صورة أو فيديو واحد على الأقل" });
       return;
     }
 
-    // لو عندك validateForm() بيتحقق من باقي الحقول
     if (!validateForm()) return;
 
     dispatch(loading_fun());
 
     try {
-      // 👇 هنا تحدد لكل index أي cloud_name رح يستخدم
+      // تحديد حساب Cloudinary بناءً على index
       const storageMap: Record<number, string> = {
         1: "dcvmfnhhk",
         2: "dsfozgiyl",
@@ -187,64 +186,61 @@ const AddApartmentPage: React.FC = () => {
           };
           compressed = await imageCompression(file, options);
 
-          if (compressed.size / 1024 <= maxSizeKB || quality <= 0.3) {
-            break;
-          }
-
+          if (compressed.size / 1024 <= maxSizeKB || quality <= 0.3) break;
           quality -= 0.1;
         }
 
         return compressed;
       }
 
+      // ✅ رفع كل الملفات
       for (const file of formData.images) {
-        if (file.type.startsWith("image/")) {
-          // ✅ صور
-          const compressed = await compressToTarget(file, 300);
-          const formDataCloud = new FormData();
-          formDataCloud.append("file", compressed);
-          formDataCloud.append("upload_preset", "my_unsigned_preset");
+        const formDataCloud = new FormData();
+        formDataCloud.append("file", file);
+        formDataCloud.append("upload_preset", "my_unsigned_preset");
 
-          const res = await fetch(
+        let res: Response;
+        let data: any;
+
+        if (file.type.startsWith("image/")) {
+          // صور
+          const compressed = await compressToTarget(file, 300);
+          formDataCloud.set("file", compressed);
+
+          res = await fetch(
             `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             { method: "POST", body: formDataCloud }
           );
 
           if (!res.ok) throw new Error("فشل رفع الصورة إلى Cloudinary");
 
-          const data = await res.json();
+          data = await res.json();
           uploadedFiles.push({
             url: data.secure_url,
             public_id: data.public_id,
             type: "image",
           });
         } else if (file.type.startsWith("video/")) {
-          // ✅ فيديو
-          const formDataCloud = new FormData();
-          formDataCloud.append("file", file);
-          formDataCloud.append("upload_preset", "my_unsigned_preset");
-
-          const res = await fetch(
+          // فيديو
+          res = await fetch(
             `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`,
             { method: "POST", body: formDataCloud }
           );
 
           if (!res.ok) throw new Error("فشل رفع الفيديو إلى Cloudinary");
 
-          const data = await res.json();
-          const encodedId = encodeURIComponent(data.public_id);
-
-          const compressedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/w_640,q_auto,f_mp4/${encodedId}.mp4`;
+          data = await res.json();
+          console.log("🎥 Cloudinary Video Response:", data);
 
           uploadedFiles.push({
-            url: compressedUrl,
+            url: data.secure_url, // 👈 استخدم الرابط كما هو
             public_id: data.public_id,
             type: "video",
           });
         }
       }
 
-      // إرسال البيانات مع الروابط والسطر الجديد storageIndex
+      // إرسال البيانات إلى Redux / backend
       dispatch(
         add_apartment({
           title: formData.title,

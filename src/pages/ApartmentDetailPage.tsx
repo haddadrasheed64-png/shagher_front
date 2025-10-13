@@ -144,7 +144,12 @@ const ApartmentDetailPage: React.FC = () => {
                 }`}
               >
                 {media.type === "video" ? (
-                  ""
+                  <video
+                    src={media.url}
+                    controls
+                    className="w-full h-full object-cover"
+                    crossOrigin="anonymous"
+                  />
                 ) : (
                   <img
                     src={media.url.replace("/upload/", "/upload/q_20,f_auto/")}
