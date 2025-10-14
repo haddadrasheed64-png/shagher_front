@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-center md:items-start">
           {/* العنوان */}
           <div className="mb-4 md:mb-0 text-center md:text-left">
-            <h2 className="text-2xl font-bold text-yellow-500">الكفو</h2>
+            <h2 className="text-2xl font-bold text-yellow-500">الجار</h2>
           </div>
 
           {/* خيارات التواصل */}
@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
           {/* الحقوق */}
           <div className="mt-2 text-center">
             <p className="text-gray-500 text-center">
-              جميع الحقوق محفوظة &copy; {new Date().getFullYear()} - الكفو
+              جميع الحقوق محفوظة &copy; {new Date().getFullYear()} - الجار
             </p>
           </div>
         </div>
