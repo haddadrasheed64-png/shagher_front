@@ -12,7 +12,7 @@ const Header: React.FC = () => {
         {/* Logo */}
 
         <h1 className="text-2xl md:text-3xl font-bold text-yellow-500">
-          الجار
+          الكفو
         </h1>
 
         {/* زر القائمة في الموبايل */}
